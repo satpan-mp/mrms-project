@@ -1,0 +1,109 @@
+# Machine-readable label definitions for MRMS.
+# Apply with a label-sync GitHub Action, e.g. crazy-max/ghaction-github-labeler.
+# This file is a recommendation; labels are not created automatically.
+
+# --- Type ---
+- name: bug
+  color: "d73a4a"
+  description: Something isn't working
+- name: feature
+  color: "0e8a16"
+  description: New feature or capability
+- name: enhancement
+  color: "a2eeef"
+  description: Improvement to existing functionality
+- name: documentation
+  color: "0075ca"
+  description: Documentation changes
+- name: task
+  color: "c5def5"
+  description: Concrete engineering task
+- name: question
+  color: "d876e3"
+  description: Further information is requested
+- name: refactor
+  color: "fbca04"
+  description: Code change without behavior change
+- name: test
+  color: "bfd4f2"
+  description: Tests added or corrected
+- name: chore
+  color: "ededed"
+  description: Maintenance / tooling
+
+# --- Area ---
+- name: frontend
+  color: "1d76db"
+  description: Display and/or Admin SPA
+- name: backend
+  color: "5319e7"
+  description: NestJS API / workers
+- name: database
+  color: "006b75"
+  description: PostgreSQL / Prisma schema & migrations
+- name: google-calendar
+  color: "fbca04"
+  description: Calendar sync / booking integration
+- name: google-meet
+  color: "f9d0c4"
+  description: Meet / conferencing integration
+- name: display
+  color: "bfdadc"
+  description: Kiosk display client
+- name: admin
+  color: "c2e0c6"
+  description: Admin panel
+- name: monitoring
+  color: "e99695"
+  description: Device monitoring / heartbeat
+- name: analytics
+  color: "d4c5f9"
+  description: Analytics & reporting
+- name: security
+  color: "b60205"
+  description: Security-related
+- name: realtime
+  color: "bfd4f2"
+  description: WebSocket / realtime
+- name: infrastructure
+  color: "333333"
+  description: Docker / Nginx / CI-CD / deployment
+
+# --- Priority ---
+- name: high priority
+  color: "b60205"
+  description: Urgent; address first
+- name: medium priority
+  color: "fbca04"
+  description: Normal priority
+- name: low priority
+  color: "0e8a16"
+  description: Can wait
+
+# --- Status / Workflow ---
+- name: needs-triage
+  color: "ededed"
+  description: Awaiting initial review/triage
+- name: blocked
+  color: "000000"
+  description: Blocked by another issue/dependency
+- name: in progress
+  color: "fef2c0"
+  description: Actively being worked on
+- name: needs review
+  color: "fbca04"
+  description: Ready for review
+- name: wontfix
+  color: "ffffff"
+  description: This will not be worked on
+- name: duplicate
+  color: "cfd3d7"
+  description: Duplicate of another issue
+
+# --- Community ---
+- name: good first issue
+  color: "7057ff"
+  description: Good for newcomers
+- name: help wanted
+  color: "008672"
+  description: Extra attention is needed

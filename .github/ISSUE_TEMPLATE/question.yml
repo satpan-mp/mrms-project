@@ -1,0 +1,39 @@
+name: "\U00002753 Question"
+description: Ask a question about MRMS usage, design, or behavior.
+title: "docs: <short question summary>"
+labels: ["question", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        For open-ended discussion, consider **GitHub Discussions** instead.
+        Use this template for a specific, answerable question about the project.
+  - type: textarea
+    id: question
+    attributes:
+      label: Your Question
+      description: State your question clearly and concisely.
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: What are you trying to achieve? What have you already tried or read?
+    validations:
+      required: false
+  - type: dropdown
+    id: area
+    attributes:
+      label: Related Area
+      options:
+        - Setup / Installation
+        - Backend / API
+        - Display (Kiosk)
+        - Admin Panel
+        - Google Integration
+        - Deployment / Infrastructure
+        - Documentation
+        - Other
+    validations:
+      required: false

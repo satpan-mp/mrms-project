@@ -1,0 +1,27 @@
+{
+  "name": "mrms-project",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Meeting Room Management System (MRMS) for PT Mitra Prodin - enterprise meeting room display & booking platform integrated with Google Workspace.",
+  "license": "UNLICENSED",
+  "packageManager": "pnpm@9.12.0",
+  "engines": {
+    "node": ">=20.11.0",
+    "pnpm": ">=9.0.0"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "lint": "echo \"[placeholder] workspace lint - implemented in Sprint 1\" && exit 0",
+    "typecheck": "echo \"[placeholder] workspace typecheck - implemented in Sprint 1\" && exit 0",
+    "test": "echo \"[placeholder] workspace test - implemented in Sprint 1\" && exit 0",
+    "build": "echo \"[placeholder] workspace build - implemented in Sprint 1\" && exit 0",
+    "format": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,yml,yaml}\"",
+    "format:write": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,yml,yaml}\""
+  },
+  "devDependencies": {
+    "prettier": "^3.3.3"
+  }
+}

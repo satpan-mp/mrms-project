@@ -1,0 +1,69 @@
+name: "\U0001F4CB Task"
+description: A concrete engineering task (implementation, chore, or spike).
+title: "<type>: <short task description>"
+labels: ["task", "needs-triage"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Task Description
+      description: What needs to be done?
+    validations:
+      required: true
+  - type: dropdown
+    id: type
+    attributes:
+      label: Task Type
+      description: Conventional Commit type this task will produce.
+      options:
+        - feat
+        - fix
+        - docs
+        - refactor
+        - test
+        - build
+        - ci
+        - chore
+        - perf
+        - style
+    validations:
+      required: true
+  - type: dropdown
+    id: sprint
+    attributes:
+      label: Sprint / Milestone
+      options:
+        - "Sprint 1 - Foundation"
+        - "Sprint 2 - Auth & CI"
+        - "Sprint 3 - Google Sync + Rooms"
+        - "Sprint 4 - Status + Schedule API"
+        - "Sprint 5 - Realtime + Display"
+        - "Sprint 6 - Display Polish + Kiosk"
+        - "Sprint 7 - Booking"
+        - "Sprint 8 - Check-in + No-show"
+        - "Sprint 9 - Conferencing"
+        - "Sprint 10 - Admin + Monitoring"
+        - "Sprint 11 - Analytics + Announcements"
+        - "Sprint 12 - Hardening + Rollout"
+        - "Backlog / Unscheduled"
+    validations:
+      required: true
+  - type: textarea
+    id: definition_of_done
+    attributes:
+      label: Definition of Done
+      value: |
+        - [ ] Implementation complete
+        - [ ] Unit/integration tests added and passing
+        - [ ] Lint + typecheck + build pass
+        - [ ] Docs updated (if architecture/behavior changed)
+        - [ ] Conventional Commit + PR opened
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Technical Notes / Dependencies
+      description: Blocking issues, related PRs, or design references.
+    validations:
+      required: false

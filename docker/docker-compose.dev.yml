@@ -1,0 +1,33 @@
+# MRMS dev overrides.
+# Exposes datastore ports for local tooling and enables development-friendly
+# settings. Compose with the base file:
+#   docker compose -f docker/docker-compose.yml -f docker/docker-compose.dev.yml up
+#
+# NOTE: hot-reload bind mounts + dev commands are added in Sprint 1 once the
+# backend/frontend code and dev scripts exist.
+
+services:
+  postgres:
+    ports:
+      - "5432:5432"
+
+  redis:
+    ports:
+      - "6379:6379"
+
+  api:
+    environment:
+      APP_ENV: development
+      APP_LOG_LEVEL: debug
+    # command: pnpm --filter @mrms/backend run start:dev   # enabled in Sprint 1
+    # volumes:
+    #   - ../apps/backend:/app/apps/backend
+
+  worker:
+    environment:
+      APP_ENV: development
+      APP_LOG_LEVEL: debug
+
+  web:
+    ports:
+      - "8080:80"

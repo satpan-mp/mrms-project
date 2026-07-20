@@ -1,0 +1,70 @@
+name: "\U00002728 Feature Request"
+description: Propose a new capability or user-facing feature for MRMS.
+title: "feat: <short description of the feature>"
+labels: ["feature", "needs-triage"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem / Motivation
+      description: What problem does this solve? Who benefits and why?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed Solution
+      description: Describe the feature and how it should behave.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Other approaches you considered and why you rejected them.
+    validations:
+      required: false
+  - type: dropdown
+    id: area
+    attributes:
+      label: Affected Area
+      options:
+        - Backend / API
+        - Display (Kiosk)
+        - Admin Panel
+        - Google Calendar Sync
+        - Google Meet / Zoom
+        - Authentication
+        - Realtime / WebSocket
+        - Device Monitoring
+        - Analytics
+        - Deployment / Infrastructure
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance Criteria
+      description: Bullet list of conditions that must be true for this to be "done".
+      value: |
+        - [ ] ...
+        - [ ] ...
+    validations:
+      required: true
+  - type: textarea
+    id: references
+    attributes:
+      label: Related Documents / Requirements
+      description: Link relevant PRD/FRS/NFR sections or design docs (e.g., FR-BOOK-3).
+    validations:
+      required: false
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Pre-submission Checklist
+      options:
+        - label: I searched existing issues and this is not a duplicate.
+          required: true
+        - label: This aligns with the project scope (not an out-of-scope / roadmap-only item).
+          required: false

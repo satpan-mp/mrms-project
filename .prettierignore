@@ -1,0 +1,10 @@
+node_modules/
+dist/
+build/
+out/
+coverage/
+.turbo/
+.vite/
+pnpm-lock.yaml
+CHANGELOG.md
+*.md

@@ -1,0 +1,44 @@
+# MRMS production overrides (on-premise Linux host).
+# Compose with the base file:
+#   docker compose -f docker/docker-compose.yml -f docker/docker-compose.prod.yml up -d
+#
+# Production hardening (TLS certs, secrets injection, log shipping, backups) is
+# finalized in Phase P8. Secrets MUST come from the host/secret store, never a
+# committed file.
+
+services:
+  postgres:
+    restart: always
+    # Data volume should map to a backed-up host path in production.
+    # volumes:
+    #   - /srv/mrms/pgdata:/var/lib/postgresql/data
+
+  redis:
+    restart: always
+
+  api:
+    restart: always
+    environment:
+      APP_ENV: production
+      APP_LOG_LEVEL: info
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: any
+
+  worker:
+    restart: always
+    environment:
+      APP_ENV: production
+      APP_LOG_LEVEL: info
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: any
+
+  web:
+    restart: always
+    # TLS termination: mount certs and expose 443 in Phase P8.
+    ports:
+      - "80:80"
+      # - "443:443"
