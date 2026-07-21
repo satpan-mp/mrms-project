@@ -70,6 +70,22 @@ ADR-008 Clean Architecture + DDD.
 | [Google Workspace Integration Guide](GOOGLE-WORKSPACE-INTEGRATION-GUIDE.md) | Operational Google/Calendar guide |
 | [Display Client Recovery](DISPLAY-CLIENT-RECOVERY.md) | Kiosk/NUC recovery scenarios |
 
+## 4a. Engineering Review Pack (pre-Sprint-1 audit)
+
+[Review pack index](review/README.md) - the final architecture validation &
+production readiness review: [Architecture Review Report](review/ARCHITECTURE-REVIEW-REPORT.md),
+[Sequence Diagrams](review/SEQUENCE-DIAGRAMS.md), [State Machines](review/STATE-MACHINES.md),
+[Deployment & Infrastructure](review/DEPLOYMENT-DIAGRAM.md),
+[Event-Driven Flow](review/EVENT-DRIVEN-FLOW.md), [Cache Strategy](review/CACHE-STRATEGY.md),
+[Performance Budget](review/PERFORMANCE-BUDGET.md), [Capacity Planning](review/CAPACITY-PLANNING.md),
+[Threat Model](review/THREAT-MODEL.md), [ERD Validation](review/ERD-VALIDATION.md),
+[Google Workspace Operational Review](review/GOOGLE-WORKSPACE-OPERATIONAL-REVIEW.md),
+[Display Client Validation](review/DISPLAY-CLIENT-VALIDATION.md),
+[Device Heartbeat Flow](review/DEVICE-HEARTBEAT-FLOW.md), [Offline Recovery](review/OFFLINE-RECOVERY.md),
+[Monitoring Dashboard](review/MONITORING-DASHBOARD.md),
+[Production Readiness Checklist](review/PRODUCTION-READINESS-CHECKLIST.md),
+[Repository Validation](review/REPOSITORY-VALIDATION.md).
+
 ## 5. Development Standards
 
 [Standards index](standards/README.md): coding, naming, folder, API, database,
