@@ -45,7 +45,7 @@ The core design set, produced before implementation and kept authoritative:
 
 ADR-001 NestJS · ADR-002 PostgreSQL · ADR-003 React · ADR-004 Socket.IO vs MQTT ·
 ADR-005 Google Calendar SSOT · ADR-006 Docker · ADR-007 Prisma ·
-ADR-008 Clean Architecture + DDD.
+ADR-008 Clean Architecture + DDD · ADR-009 Foundation tooling (pnpm/Zod/pino/test runners).
 
 ## 3. Change & Decision Governance
 
@@ -91,6 +91,13 @@ conventions.
 [technical](backlog/technical-backlog.md), [technical debt](backlog/technical-debt.md),
 [infrastructure](backlog/infrastructure-backlog.md),
 [future improvements](backlog/future-improvements.md).
+
+## 7a. Releases & Sprint Reports
+
+| Document | Purpose |
+|----------|---------|
+| [Release Notes — v0.1.0 (Sprint 1A)](releases/v0.1.0-sprint-1a.md) | Foundation release notes |
+| [Sprint 1A Report Pack](reports/sprint-1a/README.md) | Architecture validation, dependency audit, bundle size, backend performance, DB migration, Docker validation, workspace structure, git statistics, sprint progress, UI screenshots, repository health |
 
 ## 8. Project Wiki (operational)
 
