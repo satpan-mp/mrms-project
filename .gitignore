@@ -63,3 +63,11 @@ redisdata/
 tmp/
 temp/
 *.tmp
+
+# Python (skill scripts under .kiro/steering) - artifacts only, keep source .py
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/

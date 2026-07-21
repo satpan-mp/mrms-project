@@ -39,7 +39,24 @@ The core design set, produced before implementation and kept authoritative:
 | 18 | [Development Roadmap](18-Development-Roadmap.md) |
 | 19 | [Sprint Planning](19-Sprint-Planning.md) |
 
-## 2. Architecture Decision Records (ADR)
+## 2. Design System & UI/UX Workflow
+
+The UI Pro Max Design Intelligence-backed design system. All frontend work follows
+these; **no screen is implemented without passing the UI Review Workflow**.
+
+| Document | Purpose |
+|----------|---------|
+| [Design System index](design-system/README.md) | Pack index, configured principles, governance |
+| [UI Pro Max Installation](design-system/UIPRO-INSTALLATION.md) | Skill install record, version, config, deps |
+| [Design System](design-system/DESIGN-SYSTEM.md) | Color, typography, iconography, grid, spacing, radius, elevation, motion, breakpoints, states |
+| [Design Tokens](design-system/DESIGN-TOKENS.md) | Three-layer tokens + dark mode + Tailwind mapping |
+| [Component Standards](design-system/COMPONENT-STANDARDS.md) | Button, card, badge, status indicator, room card, timeline, nav, dialog, toast, tooltip, states |
+| [Dashboard Standards](design-system/DASHBOARD-STANDARDS.md) | Display (TV), Admin, Monitoring, Analytics layouts |
+| [UX Standards](design-system/UX-STANDARDS.md) | Booking, check-in, Meet launch, error, offline, reconnection, loading, notifications |
+| [Accessibility](design-system/ACCESSIBILITY.md) | WCAG 2.1 AA, keyboard, contrast, focus, typography |
+| [UI Review Workflow](design-system/UI-REVIEW-WORKFLOW.md) | Mandatory 7-step gate before implementing any screen |
+
+## 3. Architecture Decision Records (ADR)
 
 [ADR index](adr/README.md) · [template](adr/adr-template.md)
 
@@ -47,7 +64,7 @@ ADR-001 NestJS · ADR-002 PostgreSQL · ADR-003 React · ADR-004 Socket.IO vs MQ
 ADR-005 Google Calendar SSOT · ADR-006 Docker · ADR-007 Prisma ·
 ADR-008 Clean Architecture + DDD.
 
-## 3. Change & Decision Governance
+## 4. Change & Decision Governance
 
 | Document | Purpose |
 |----------|---------|
@@ -55,7 +72,7 @@ ADR-008 Clean Architecture + DDD.
 | [Decision Log](decisions/README.md) | Product/process decisions (D-001..) |
 | [Risk Register](RISK-REGISTER.md) | Risks (R-01..) with mitigation/contingency |
 
-## 4. Strategy & Engineering References
+## 5. Strategy & Engineering References
 
 | Document | Purpose |
 |----------|---------|
@@ -70,13 +87,13 @@ ADR-008 Clean Architecture + DDD.
 | [Google Workspace Integration Guide](GOOGLE-WORKSPACE-INTEGRATION-GUIDE.md) | Operational Google/Calendar guide |
 | [Display Client Recovery](DISPLAY-CLIENT-RECOVERY.md) | Kiosk/NUC recovery scenarios |
 
-## 5. Development Standards
+## 6. Development Standards
 
 [Standards index](standards/README.md): coding, naming, folder, API, database,
 git, commit, branch, environment-variable, error-handling, and logging
 conventions.
 
-## 6. Process
+## 7. Process
 
 | Document | Purpose |
 |----------|---------|
@@ -85,27 +102,27 @@ conventions.
 | [Release Management](process/release-management.md) | Versioning, RC, release, rollback, hotfix |
 | [Milestones](MILESTONES.md) | Sprint-to-milestone + release-tag mapping |
 
-## 7. Backlogs
+## 8. Backlogs
 
 [Backlog index](backlog/README.md): [product](backlog/product-backlog.md),
 [technical](backlog/technical-backlog.md), [technical debt](backlog/technical-debt.md),
 [infrastructure](backlog/infrastructure-backlog.md),
 [future improvements](backlog/future-improvements.md).
 
-## 8. Project Wiki (operational)
+## 9. Project Wiki (operational)
 
 [Wiki index](wiki/README.md): installation, development, deployment,
 troubleshooting, FAQ, known issues, maintenance, monitoring, disaster recovery,
 operations.
 
-## 9. Document Conventions
+## 10. Document Conventions
 
 Every document includes a metadata header: **Purpose, Scope, Version, Author,
 Last Updated, Related Documents, References**. Cross-references use relative
 links. Deep content is authoritative in one place; other docs link to it rather
 than duplicating.
 
-## 10. Key Project Invariants (quick reference)
+## 11. Key Project Invariants (quick reference)
 
 - **Google Calendar is the single source of truth**; the app **reads + creates**
   events only - **never edits/deletes** ([ADR-005](adr/ADR-005-google-calendar-source-of-truth.md)).
