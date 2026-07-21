@@ -1,0 +1,9 @@
+{
+  "//": "Root tsconfig for editor tooling only. Each package/app owns its build/typecheck config and is checked independently via `pnpm -r typecheck`.",
+  "extends": "@mrms/config/tsconfig/base.json",
+  "compilerOptions": {
+    "noEmit": true
+  },
+  "include": [],
+  "exclude": ["node_modules", "**/dist", "**/build", "**/coverage"]
+}
