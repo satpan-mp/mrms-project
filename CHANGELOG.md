@@ -10,6 +10,31 @@ noted explicitly.
 
 ## [Unreleased]
 
+_Sprint 1B work will be listed here._
+
+## [0.2.0-foundation] - 2026-07-21
+
+Consolidated Sprint 1A foundation baseline (single source of truth on `develop`;
+official rollback point before Sprint 1B).
+
+### Security & hardening
+- Fixed a systemic NestJS DI defect: injected classes were imported as type-only,
+  erasing decorator metadata (ADR-010); repaired across 4 files and disabled the
+  offending ESLint autofix for the backend preset.
+- Added HTTP hardening: `helmet`, `compression`, `@nestjs/throttler` (global rate
+  limiting, env-configurable), request body-size limits (1 MB), process-level
+  `unhandledRejection`/`uncaughtException` guards, `x-powered-by` off, `trust proxy`.
+- Confirmed pino sensitive-data redaction; added env-gated Prisma query logging.
+
+### Tooling & CI
+- Jest `coverageProvider: v8` + coverage ratchet-floor threshold; CI coverage step
+  + lcov artifact upload.
+
+### Consolidation
+- Fast-forward merged foundation PRs #6–#9 into `develop` (linear history);
+  tagged `v0.2.0-foundation`; enabled branch protection + signed commits on
+  `main` and `develop`; published Sprint 1B Engineering Rules.
+
 ### Added
 - **Sprint 1A - Foundation.** Working monorepo application skeleton (no business
   features yet), per the approved architecture.
@@ -72,5 +97,6 @@ noted explicitly.
 - Google Calendar remains the single source of truth; the app will read and
   create events only (never edit or delete).
 
-[Unreleased]: https://github.com/satpan-mp/mrms-project/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/satpan-mp/mrms-project/compare/v0.2.0-foundation...HEAD
+[0.2.0-foundation]: https://github.com/satpan-mp/mrms-project/releases/tag/v0.2.0-foundation
 [0.1.0]: https://github.com/satpan-mp/mrms-project/releases/tag/v0.1.0

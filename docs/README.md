@@ -98,6 +98,11 @@ conventions.
 |----------|---------|
 | [Release Notes — v0.1.0 (Sprint 1A)](releases/v0.1.0-sprint-1a.md) | Foundation release notes |
 | [Sprint 1A Report Pack](reports/sprint-1a/README.md) | Architecture validation, dependency audit, bundle size, backend performance, DB migration, Docker validation, workspace structure, git statistics, sprint progress, UI screenshots, repository health |
+| [Final Foundation Completion Report](reports/FINAL-FOUNDATION-COMPLETION-REPORT.md) | v0.2.0-foundation consolidation, enterprise scorecard, GO/NO-GO |
+| [Enterprise Certification](reports/SPRINT-1A-ENTERPRISE-CERTIFICATION.md) · [Final Engineering Review](reports/FINAL-ENGINEERING-REVIEW.md) · [Engineering Checklist](reports/final-engineering-checklist.md) | Certification passes |
+| [Pre-Sprint-1B Certification](certification/PRE-SPRINT-1B-CERTIFICATION.md) · [Executive Summary](certification/EXECUTIVE-SUMMARY.md) | Certification |
+| [Sprint 1B Engineering Rules](process/SPRINT-1B-ENGINEERING-RULES.md) | Mandatory rules (enforced by branch protection) |
+| Release **v0.2.0-foundation** | Consolidated baseline / rollback point (GitHub Releases) |
 
 ## 8. Project Wiki (operational)
 
