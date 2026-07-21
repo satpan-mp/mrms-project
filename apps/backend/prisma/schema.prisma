@@ -1,0 +1,79 @@
+// MRMS Prisma schema.
+// Source of record: docs/08-Database-Schema.md (full model) and docs/07-Database-ERD.md.
+//
+// Sprint 1A (foundation) intentionally materializes ONLY the tables needed for
+// the platform foundation and the upcoming authentication work: identity
+// (User + UserRole), the audit/system log (SystemLog + LogType), and runtime
+// Settings. The remaining business models (Site, Room, Facility, MeetingCache,
+// Booking, CheckIn, Device, etc.) are added in their respective sprints exactly
+// as specified in Doc 08. Fields below match Doc 08 one-to-one.
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum UserRole {
+  ADMINISTRATOR
+  EMPLOYEE
+}
+
+enum LogType {
+  SYSTEM
+  ACTIVITY
+  AUDIT
+}
+
+/// Application user (identity provided by Google Workspace OAuth - Doc 12).
+model User {
+  id          String    @id @default(uuid())
+  googleId    String    @unique @map("google_id")
+  email       String    @unique
+  name        String
+  avatarUrl   String?   @map("avatar_url")
+  role        UserRole  @default(EMPLOYEE)
+  active      Boolean   @default(true)
+  lastLoginAt DateTime? @map("last_login_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  logs SystemLog[]
+
+  @@map("users")
+}
+
+/// System / activity / audit log (Doc 08). Audit entries are written by the
+/// audit interceptor for state-changing admin actions (added with those routes).
+model SystemLog {
+  id          String   @id @default(uuid())
+  actorUserId String?  @map("actor_user_id")
+  logType     LogType  @default(SYSTEM) @map("log_type")
+  action      String
+  targetType  String?  @map("target_type")
+  targetId    String?  @map("target_id")
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  actor User? @relation(fields: [actorUserId], references: [id])
+
+  @@index([createdAt])
+  @@index([logType, createdAt])
+  @@map("system_logs")
+}
+
+/// Runtime-tunable settings (Doc 16 §9). Cached in Redis and hot-reloadable so
+/// admins can change behavior (status windows, sync interval) without redeploy.
+model Setting {
+  id        String   @id @default(uuid())
+  key       String
+  value     Json
+  scope     String   @default("global")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([key, scope])
+  @@map("settings")
+}

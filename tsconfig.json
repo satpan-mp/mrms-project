@@ -1,0 +1,9 @@
+{
+  "//": "Root tsconfig for editor/tooling only (relative extends so esbuild/vite dep-scan resolves it without package-exports support). Each package/app owns its build/typecheck config and is checked independently via `pnpm -r typecheck`.",
+  "extends": "./packages/config/tsconfig/base.json",
+  "compilerOptions": {
+    "noEmit": true
+  },
+  "include": [],
+  "exclude": ["node_modules", "**/dist", "**/build", "**/coverage"]
+}

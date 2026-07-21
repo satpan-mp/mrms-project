@@ -16,38 +16,9 @@ env:
   PNPM_VERSION: "9.12.0"
 
 jobs:
-  install:
-    name: Install dependencies
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: pnpm
-
-      # NOTE: Placeholder until a pnpm-lock.yaml exists (Sprint 1).
-      # Switch to `pnpm install --frozen-lockfile` once dependencies are added.
-      - name: Install
-        run: |
-          if [ -f pnpm-lock.yaml ]; then
-            pnpm install --frozen-lockfile
-          else
-            echo "No lockfile yet - repository initialization phase. Skipping install."
-          fi
-
   lint:
     name: Lint
     runs-on: ubuntu-latest
-    needs: install
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -58,15 +29,13 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
       - name: Install
-        run: |
-          if [ -f pnpm-lock.yaml ]; then pnpm install --frozen-lockfile; fi
+        run: pnpm install --frozen-lockfile
       - name: Lint
         run: pnpm run lint
 
   typecheck:
     name: Typecheck
     runs-on: ubuntu-latest
-    needs: install
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -77,15 +46,15 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
       - name: Install
-        run: |
-          if [ -f pnpm-lock.yaml ]; then pnpm install --frozen-lockfile; fi
+        run: pnpm install --frozen-lockfile
+      - name: Generate Prisma client
+        run: pnpm --filter @mrms/backend exec prisma generate
       - name: Typecheck
         run: pnpm run typecheck
 
   test:
     name: Test
     runs-on: ubuntu-latest
-    needs: install
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -96,10 +65,22 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
       - name: Install
-        run: |
-          if [ -f pnpm-lock.yaml ]; then pnpm install --frozen-lockfile; fi
-      - name: Test
+        run: pnpm install --frozen-lockfile
+      - name: Generate Prisma client
+        run: pnpm --filter @mrms/backend exec prisma generate
+      - name: Unit tests
         run: pnpm run test
+      - name: Backend e2e (mocked datastores)
+        run: pnpm --filter @mrms/backend run test:e2e
+      - name: Backend coverage (enforces ratchet-floor thresholds)
+        run: pnpm --filter @mrms/backend run test:cov
+      - name: Upload backend coverage (lcov)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-coverage
+          path: apps/backend/coverage/lcov.info
+          if-no-files-found: ignore
 
   build:
     name: Build
@@ -115,7 +96,8 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
       - name: Install
-        run: |
-          if [ -f pnpm-lock.yaml ]; then pnpm install --frozen-lockfile; fi
+        run: pnpm install --frozen-lockfile
+      - name: Generate Prisma client
+        run: pnpm --filter @mrms/backend exec prisma generate
       - name: Build
         run: pnpm run build

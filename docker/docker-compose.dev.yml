@@ -1,33 +1,43 @@
 # MRMS dev overrides.
-# Exposes datastore ports for local tooling and enables development-friendly
-# settings. Compose with the base file:
+# Exposes datastore ports for local tooling, adds pgAdmin, and turns on
+# development-friendly settings. Compose with the base file:
 #   docker compose -f docker/docker-compose.yml -f docker/docker-compose.dev.yml up
 #
-# NOTE: hot-reload bind mounts + dev commands are added in Sprint 1 once the
-# backend/frontend code and dev scripts exist.
+# For fast frontend iteration, run the Vite dev servers on the host instead
+# (`pnpm dev:admin` / `pnpm dev:display`); they proxy /api and /realtime to the
+# API. The `web` (nginx) container serves the built SPAs.
 
 services:
   postgres:
     ports:
-      - "5432:5432"
+      - '5432:5432'
 
   redis:
     ports:
-      - "6379:6379"
+      - '6379:6379'
 
   api:
     environment:
       APP_ENV: development
       APP_LOG_LEVEL: debug
-    # command: pnpm --filter @mrms/backend run start:dev   # enabled in Sprint 1
-    # volumes:
-    #   - ../apps/backend:/app/apps/backend
+    ports:
+      # Expose the API directly for local debugging / Swagger at /api/docs.
+      - '3000:3000'
 
   worker:
     environment:
       APP_ENV: development
       APP_LOG_LEVEL: debug
 
-  web:
+  # Database admin UI (dev only).
+  pgadmin:
+    image: dpage/pgadmin4:8
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@mitraprodin.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-admin}
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
     ports:
-      - "8080:80"
+      - '${PGADMIN_PORT:-5050}:80'
+    depends_on:
+      - postgres

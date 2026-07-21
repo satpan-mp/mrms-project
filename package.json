@@ -9,19 +9,26 @@
     "node": ">=20.11.0",
     "pnpm": ">=9.0.0"
   },
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
   "scripts": {
-    "lint": "echo \"[placeholder] workspace lint - implemented in Sprint 1\" && exit 0",
-    "typecheck": "echo \"[placeholder] workspace typecheck - implemented in Sprint 1\" && exit 0",
-    "test": "echo \"[placeholder] workspace test - implemented in Sprint 1\" && exit 0",
-    "build": "echo \"[placeholder] workspace build - implemented in Sprint 1\" && exit 0",
-    "format": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,yml,yaml}\"",
-    "format:write": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,yml,yaml}\""
+    "build": "pnpm -r --if-present run build",
+    "lint": "pnpm -r --if-present run lint",
+    "lint:fix": "pnpm -r --if-present run lint:fix",
+    "typecheck": "pnpm -r --if-present run typecheck",
+    "test": "pnpm -r --if-present run test",
+    "test:cov": "pnpm -r --if-present run test:cov",
+    "format": "prettier --check \"**/*.{ts,tsx,js,jsx,cjs,json,md,yml,yaml}\"",
+    "format:write": "prettier --write \"**/*.{ts,tsx,js,jsx,cjs,json,md,yml,yaml}\"",
+    "dev:backend": "pnpm --filter @mrms/backend run start:dev",
+    "dev:display": "pnpm --filter @mrms/display run dev",
+    "dev:admin": "pnpm --filter @mrms/admin run dev",
+    "prepare": "husky"
   },
   "devDependencies": {
-    "prettier": "^3.3.3"
+    "@commitlint/cli": "^19.4.0",
+    "@commitlint/config-conventional": "^19.4.0",
+    "husky": "^9.1.5",
+    "lint-staged": "^15.2.10",
+    "prettier": "^3.3.3",
+    "typescript": "^5.5.4"
   }
 }

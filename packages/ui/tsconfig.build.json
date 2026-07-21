@@ -1,0 +1,12 @@
+{
+  "extends": "@mrms/config/tsconfig/base.json",
+  "compilerOptions": {
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "jsx": "react-jsx",
+    "noEmit": false,
+    "outDir": "dist",
+    "rootDir": "src"
+  },
+  "include": ["src"],
+  "exclude": ["src/**/*.spec.ts", "src/**/*.spec.tsx", "src/**/*.test.tsx"]
+}

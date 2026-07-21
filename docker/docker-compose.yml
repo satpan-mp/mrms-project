@@ -1,13 +1,22 @@
 # MRMS base compose (infrastructure topology).
-# Defines the service graph: nginx -> api (+ realtime) / web, api+worker -> postgres+redis.
-# Application images are initialization skeletons; app logic lands in Sprint 1+.
+# Service graph: web (nginx) -> api (+ realtime); api + worker -> postgres + redis.
+# A one-shot `migrate` service applies Prisma migrations before api/worker start.
 #
 # Usage:
 #   Base only:  docker compose -f docker/docker-compose.yml up
 #   Dev:        docker compose -f docker/docker-compose.yml -f docker/docker-compose.dev.yml up
 #   Prod:       docker compose -f docker/docker-compose.yml -f docker/docker-compose.prod.yml up -d
+#
+# DATABASE_URL / REDIS_URL are constructed here for the compose network
+# (hosts `postgres` / `redis`), overriding the localhost values in .env.
 
 name: mrms
+
+x-app-env: &app-env
+  APP_ENV: ${APP_ENV:-production}
+  APP_LOG_LEVEL: ${APP_LOG_LEVEL:-info}
+  DATABASE_URL: postgresql://${DATABASE_USER:-mrms}:${DATABASE_PASSWORD:-mrms}@postgres:5432/${DATABASE_NAME:-mrms}?schema=public
+  REDIS_URL: redis://redis:6379
 
 services:
   postgres:
@@ -20,7 +29,7 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USER:-mrms}"]
+      test: ['CMD-SHELL', 'pg_isready -U ${DATABASE_USER:-mrms}']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -28,14 +37,28 @@ services:
   redis:
     image: redis:7-alpine
     restart: unless-stopped
-    command: ["redis-server", "--appendonly", "yes"]
+    command: ['redis-server', '--appendonly', 'yes']
     volumes:
       - redisdata:/data
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ['CMD', 'redis-cli', 'ping']
       interval: 10s
       timeout: 5s
       retries: 5
+
+  # One-shot: apply Prisma migrations, then exit. api/worker wait for success.
+  migrate:
+    image: mrms/api:latest
+    build:
+      context: ..
+      dockerfile: docker/api.Dockerfile
+    restart: 'no'
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      <<: *app-env
+    command: ['pnpm', 'exec', 'prisma', 'migrate', 'deploy']
 
   api:
     image: mrms/api:latest
@@ -44,17 +67,15 @@ services:
       dockerfile: docker/api.Dockerfile
     restart: unless-stopped
     depends_on:
-      postgres:
-        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
       redis:
         condition: service_healthy
     environment:
-      APP_ENV: ${APP_ENV:-production}
-      APP_PORT: "3000"
-      DATABASE_URL: ${DATABASE_URL}
-      REDIS_URL: ${REDIS_URL}
+      <<: *app-env
+      APP_PORT: '3000'
     expose:
-      - "3000"
+      - '3000'
 
   worker:
     image: mrms/worker:latest
@@ -63,14 +84,12 @@ services:
       dockerfile: docker/worker.Dockerfile
     restart: unless-stopped
     depends_on:
-      postgres:
-        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
       redis:
         condition: service_healthy
     environment:
-      APP_ENV: ${APP_ENV:-production}
-      DATABASE_URL: ${DATABASE_URL}
-      REDIS_URL: ${REDIS_URL}
+      <<: *app-env
 
   web:
     image: mrms/web:latest
@@ -81,7 +100,7 @@ services:
     depends_on:
       - api
     ports:
-      - "${WEB_HTTP_PORT:-8080}:80"
+      - '${WEB_HTTP_PORT:-8080}:80'
 
 volumes:
   pgdata:
