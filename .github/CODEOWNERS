@@ -1,0 +1,43 @@
+# CODEOWNERS - MRMS
+# ---------------------------------------------------------------------------
+# Code owners are automatically requested for review when a PR changes matching
+# files. Enforced once "Require review from Code Owners" is enabled in branch
+# protection for `main` (and optionally `develop`). See
+# .github/BRANCH_PROTECTION.md.
+#
+# ASSUMPTION: `@satpan-mp` is the GitHub account that owns this repository
+# (https://github.com/satpan-mp/mrms-project). If the actual maintainer handle
+# differs, or a team is created (e.g. `@mitra-prodin/mrms-maintainers`), update
+# the entries below. Team handles require the org form `@org/team`.
+# ---------------------------------------------------------------------------
+
+# Default owner for everything in the repo (fallback).
+*                               @satpan-mp
+
+# --- Governance & policy (high sensitivity) ---
+/.github/                       @satpan-mp
+/CODEOWNERS                     @satpan-mp
+/.github/CODEOWNERS             @satpan-mp
+/LICENSE                        @satpan-mp
+/SECURITY.md                    @satpan-mp
+
+# --- Documentation (design-first source of truth) ---
+/docs/                          @satpan-mp
+/docs/adr/                      @satpan-mp
+/docs/rfc/                      @satpan-mp
+/docs/decisions/                @satpan-mp
+/docs/design-system/            @satpan-mp
+
+# --- CI / infrastructure ---
+/.github/workflows/             @satpan-mp
+/docker/                        @satpan-mp
+/infrastructure/                @satpan-mp
+
+# --- Application areas (assign to specialists/teams as the team grows) ---
+/apps/backend/                  @satpan-mp
+/apps/display/                  @satpan-mp
+/apps/admin/                    @satpan-mp
+/packages/                      @satpan-mp
+
+# --- Database (Prisma schema & migrations - review carefully) ---
+/apps/backend/prisma/           @satpan-mp

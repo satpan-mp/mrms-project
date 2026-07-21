@@ -1,0 +1,52 @@
+version: 2
+
+# Dependabot keeps dependencies and GitHub Actions up to date via automated PRs
+# targeting `develop`. Ecosystems are enabled defensively; directories that do
+# not yet contain a manifest are simply no-ops until Sprint 1 adds them.
+updates:
+  # Root pnpm workspace (monorepo). Covers apps/* and packages/* hoisted deps.
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "Asia/Makassar"
+    open-pull-requests-limit: 10
+    target-branch: "develop"
+    labels: ["dependencies", "chore"]
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+    groups:
+      minor-and-patch:
+        update-types: ["minor", "patch"]
+
+  # GitHub Actions used by the workflows in .github/workflows.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "Asia/Makassar"
+    open-pull-requests-limit: 5
+    target-branch: "develop"
+    labels: ["ci", "chore"]
+    commit-message:
+      prefix: "ci"
+
+  # Docker base images for the api/worker/web Dockerfiles.
+  - package-ecosystem: "docker"
+    directory: "/docker"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "Asia/Makassar"
+    open-pull-requests-limit: 5
+    target-branch: "develop"
+    labels: ["infrastructure", "chore"]
+    commit-message:
+      prefix: "chore"
+      include: "scope"

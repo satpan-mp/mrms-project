@@ -1,0 +1,31 @@
+name: Dependency Review
+
+# Scans dependency manifest changes on PRs and fails on high-severity
+# vulnerabilities or disallowed licenses. Requires the repository Dependency
+# Graph to be enabled (public repos: on by default; private repos: enable under
+# Settings -> Advanced Security / Code security). No-op until manifests exist.
+
+on:
+  pull_request:
+    branches: [main, develop, "release/**"]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  dependency-review:
+    name: Dependency Review
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Dependency Review
+        uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: high
+          comment-summary-in-pr: on-failure
+          # Deny copyleft/network-copyleft licenses incompatible with the
+          # proprietary MRMS distribution. Adjust with legal as needed.
+          deny-licenses: AGPL-3.0, GPL-3.0, LGPL-3.0

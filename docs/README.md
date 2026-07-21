@@ -85,6 +85,14 @@ conventions.
 | [Release Management](process/release-management.md) | Versioning, RC, release, rollback, hotfix |
 | [Milestones](MILESTONES.md) | Sprint-to-milestone + release-tag mapping |
 
+## 6a. GitHub Governance
+
+[GitHub governance index](github/README.md): repository settings & branch
+protection, security automation, project board, program milestones, release
+strategy, Sprint 1 phased plan, and the Sprint 1 readiness review. Repo automation
+lives in [`.github/`](../.github) (CI, CodeQL, Dependabot, Dependency Review,
+CODEOWNERS, issue/PR templates, labels).
+
 ## 7. Backlogs
 
 [Backlog index](backlog/README.md): [product](backlog/product-backlog.md),

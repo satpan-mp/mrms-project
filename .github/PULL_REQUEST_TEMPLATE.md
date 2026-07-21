@@ -3,7 +3,7 @@
   Title MUST follow Conventional Commits, e.g.:
     feat(booking): create Google Calendar event on booking
     fix(sync): handle 410 invalid sync token
-  Keep the title under 70 characters.
+  Keep the title under 70 characters. Target branch is usually `develop`.
 -->
 
 ## Summary
@@ -34,47 +34,72 @@ Closes #
 -
 -
 
-## Screenshots / Recordings
+## Screenshots / Recordings (UI changes)
 
-<!-- For UI changes, attach before/after screenshots or a short clip.
+<!-- For UI changes, attach before/after screenshots or a short clip, in BOTH
+     light and dark themes (and the TV tier for Display screens).
      For backend-only changes, write: "No UI changes." -->
 
 No UI changes.
 
-## Testing
+## Mandatory Quality Checklist
 
-<!-- How was this verified? List unit/integration/manual tests and results. -->
+> Every item must be checked or explicitly marked N/A with a reason. This gate
+> mirrors the Definition of Done and the UI Review Workflow.
 
-- [ ] Unit tests added/updated
-- [ ] Integration tests added/updated
-- [ ] Manual testing performed (describe below)
-
-Manual testing notes:
+- [ ] **Documentation updated** (docs-first: architecture/behavior changes reflected in `docs/`)
+- [ ] **Build successful** (`pnpm run build`)
+- [ ] **Lint passed** (`pnpm run lint`)
+- [ ] **Type check passed** (`pnpm run typecheck`)
+- [ ] **Tests passed** (unit/integration added or updated; `pnpm run test`)
+- [ ] **Security review** (authz/authn, input validation, secrets, OWASP; see `docs/SECURITY.md`)
+- [ ] **Accessibility review** (WCAG 2.1 AA; keyboard, contrast, focus - N/A for backend-only)
+- [ ] **Performance review** (no N+1, no CLS, queries indexed, budgets respected)
 
 ## Breaking Changes
 
-<!-- Does this PR introduce any breaking change (API, DB schema, config, contract)?
-     If yes, describe the impact and the migration path. If no, write "None." -->
+<!-- API, DB schema, event contract, or config contract break?
+     If yes, describe impact + migration path. If no, write "None." -->
 
 None.
 
-## Checklist
+## Database Migration
+
+<!-- Does this PR add/modify a Prisma migration?
+     If yes: describe the change, confirm it is reversible or has a documented
+     forward-fix, and that the rollback path is verified. If no, write "None." -->
+
+- [ ] No migration in this PR
+- [ ] Migration included - reviewed, reversible/forward-fix documented (see `docs/DATABASE-STRATEGY.md`)
+
+## Environment Variables
+
+<!-- Any new/changed env vars or runtime config?
+     If yes, list them and confirm `.env.example` + `docs/CONFIGURATION.md` are
+     updated and no secret values are committed. If no, write "None." -->
+
+- [ ] No env/config changes
+- [ ] Env/config changed - `.env.example` and `docs/CONFIGURATION.md` updated; no secrets committed
+
+## Rollback Consideration
+
+<!-- How is this change rolled back if it fails in production?
+     Note image-tag rollback, data implications, and feature-flag if any.
+     See docs/process/release-management.md and docs/DISASTER-RECOVERY.md. -->
+
+## General Checklist
 
 - [ ] Title follows Conventional Commits
 - [ ] Branch follows the naming convention (`feature/*`, `fix/*`, `bugfix/*`, `hotfix/*`, `release/*`)
-- [ ] Code builds successfully
-- [ ] Lint passes
-- [ ] Type checking passes
-- [ ] Tests pass (where applicable)
+- [ ] Targets the correct base branch (`develop` for features/fixes; `main` only via release/hotfix)
 - [ ] No temporary code, commented-out code, or debug logs
 - [ ] No hardcoded secrets or credentials
 - [ ] No unused files
 - [ ] Clean Architecture & SOLID respected
 - [ ] Naming conventions and folder structure respected
 - [ ] Proper validation, error handling, and logging in place
-- [ ] Security best practices considered
-- [ ] Documentation updated (if architecture/behavior changed)
 - [ ] CHANGELOG updated (for user-facing changes)
+- [ ] Linked to the correct Milestone and Project board item
 
 ## Additional Notes
 

@@ -1,0 +1,70 @@
+name: "\U0001F4DA Documentation"
+description: Report missing, unclear, outdated, or incorrect documentation.
+title: "docs: <short description>"
+labels: ["documentation", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        MRMS follows **documentation-first development** - docs are authoritative
+        and stay in sync with implementation. Use this to flag or request doc changes.
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Type of Documentation Issue
+      options:
+        - Missing documentation
+        - Incorrect / outdated content
+        - Unclear / hard to follow
+        - Broken link or reference
+        - New document needed
+        - Improvement / restructuring
+    validations:
+      required: true
+  - type: input
+    id: location
+    attributes:
+      label: Document / Location
+      description: Path or link to the affected doc (e.g., docs/09-API-Specification.md, docs/design-system/...).
+      placeholder: docs/...
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What is wrong or missing?
+      description: Describe the gap or error clearly.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Suggested Change
+      description: What should it say instead? Draft text is welcome.
+    validations:
+      required: false
+  - type: dropdown
+    id: area
+    attributes:
+      label: Documentation Area
+      options:
+        - Design docs (01-19)
+        - ADR / RFC / Decision Log
+        - Standards / Conventions
+        - Process (DoR/DoD/Release)
+        - Design System
+        - Wiki / Operations
+        - README / Contributing
+        - API / Schema reference
+        - Other
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Pre-submission Checklist
+      options:
+        - label: I searched existing issues and this is not a duplicate.
+          required: true
+        - label: This change keeps a single source of truth (links rather than duplicates).
+          required: false

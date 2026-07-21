@@ -1,0 +1,82 @@
+name: "\U0001F4B3 Technical Debt"
+description: Record a known shortcut, workaround, or code/design debt to repay later.
+title: "chore(debt): <short description>"
+labels: ["technical-debt", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this to make technical debt **visible and trackable**. Debt is
+        acceptable when it is intentional, documented, and scheduled for repayment.
+  - type: textarea
+    id: debt
+    attributes:
+      label: What is the debt?
+      description: Describe the shortcut/workaround and where it lives (files/modules).
+    validations:
+      required: true
+  - type: textarea
+    id: reason
+    attributes:
+      label: Why was it taken?
+      description: Context/trade-off at the time (deadline, unknowns, dependency).
+    validations:
+      required: true
+  - type: textarea
+    id: impact
+    attributes:
+      label: Impact / Risk if unaddressed
+      description: Maintainability, performance, security, or velocity consequences.
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Affected Area
+      options:
+        - Backend / API
+        - Frontend (Display/Admin)
+        - Database / Prisma
+        - Google Integration
+        - Realtime / WebSocket
+        - Infrastructure / CI-CD
+        - Design System / UI
+        - Documentation
+        - Other
+    validations:
+      required: true
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      options:
+        - High (actively causing pain / risk)
+        - Medium (will bite us soon)
+        - Low (nice to clean up)
+    validations:
+      required: true
+  - type: textarea
+    id: remediation
+    attributes:
+      label: Proposed Remediation
+      description: What "repaying" this debt looks like, and rough effort.
+      value: |
+        - [ ] ...
+    validations:
+      required: true
+  - type: textarea
+    id: references
+    attributes:
+      label: References
+      description: Link related PRs, issues, ADRs, or the technical-debt backlog entry.
+    validations:
+      required: false
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Pre-submission Checklist
+      options:
+        - label: I searched existing issues and this is not a duplicate.
+          required: true
+        - label: I added it to docs/backlog/technical-debt.md if it is significant.
+          required: false

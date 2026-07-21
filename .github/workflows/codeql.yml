@@ -1,0 +1,64 @@
+name: CodeQL
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop, "release/**"]
+  schedule:
+    # Weekly full scan (Mondays 05:30 UTC).
+    - cron: "30 5 * * 1"
+  workflow_dispatch:
+
+concurrency:
+  group: codeql-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        language: ["javascript-typescript"]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # During the initialization phase there is no JS/TS source yet, which would
+      # make CodeQL fail with "no source code found". Detect source first and
+      # skip analysis (green) until code exists.
+      - name: Detect analyzable source
+        id: detect
+        shell: bash
+        run: |
+          if find . -type d -name node_modules -prune -o \
+               \( -name '*.ts' -o -name '*.tsx' -o -name '*.js' -o -name '*.jsx' \) -print \
+               | grep -q .; then
+            echo "has_code=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_code=false" >> "$GITHUB_OUTPUT"
+            echo "No JS/TS source found yet - skipping CodeQL (initialization phase)."
+          fi
+
+      - name: Initialize CodeQL
+        if: steps.detect.outputs.has_code == 'true'
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          queries: security-and-quality
+
+      - name: Autobuild
+        if: steps.detect.outputs.has_code == 'true'
+        uses: github/codeql-action/autobuild@v3
+
+      - name: Perform CodeQL Analysis
+        if: steps.detect.outputs.has_code == 'true'
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{ matrix.language }}"

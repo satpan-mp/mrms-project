@@ -1,0 +1,40 @@
+name: Label Sync
+
+# Synchronizes repository labels to the definitions in .github/labels.yml.
+# Run manually (Actions -> Label Sync -> Run workflow) or automatically when
+# labels.yml changes on develop/main. Uses the built-in GITHUB_TOKEN.
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - ".github/labels.yml"
+      - ".github/workflows/labeler.yml"
+  workflow_dispatch:
+    inputs:
+      dry-run:
+        description: "Preview changes without applying them"
+        type: boolean
+        default: false
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  label-sync:
+    name: Sync labels
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Sync labels from .github/labels.yml
+        uses: crazy-max/ghaction-github-labeler@v5
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          yaml-file: .github/labels.yml
+          # Do NOT delete labels created outside labels.yml (e.g. Dependabot's
+          # "dependencies", or GitHub defaults). Set to false to prune to spec.
+          skip-delete: true
+          dry-run: ${{ github.event_name == 'push' || inputs.dry-run }}

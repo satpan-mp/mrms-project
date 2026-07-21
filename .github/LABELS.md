@@ -1,12 +1,13 @@
-# Recommended GitHub Labels
+# GitHub Labels
 
-> **Status:** Recommendation. Labels are not created automatically. An admin can
-> create them manually, or apply the machine-readable list in
-> `.github/labels.yml` using a label-sync GitHub Action (e.g.,
-> `crazy-max/ghaction-github-labeler`).
+> **Status:** The machine-readable source of truth is `.github/labels.yml`.
+> Labels can be created automatically via the label-sync workflow
+> (`.github/workflows/labeler.yml`, manual `workflow_dispatch`), or an admin can
+> create them manually. This file is the human-readable overview.
 
-Labels are grouped by purpose: **type**, **area**, **priority**, and **status**.
-A consistent color scheme aids scanning on the issues/PR boards.
+Labels are grouped by purpose: **type**, **area**, **priority**, and **status**
+(plus a small **community** group). A consistent color scheme aids scanning on
+the issues/PR boards. The set covers the standard MRMS label taxonomy.
 
 ---
 
@@ -18,10 +19,13 @@ A consistent color scheme aids scanning on the issues/PR boards.
 | `feature` | `#0e8a16` | New feature or capability |
 | `enhancement` | `#a2eeef` | Improvement to existing functionality |
 | `documentation` | `#0075ca` | Documentation changes |
+| `architecture` | `#3f51b5` | Architecture / design-level change (ADR/RFC) |
 | `task` | `#c5def5` | Concrete engineering task |
+| `research` | `#6f42c1` | Research / spike / investigation |
 | `question` | `#d876e3` | Further information is requested |
 | `refactor` | `#fbca04` | Code change without behavior change |
-| `test` | `#bfd4f2` | Tests added or corrected |
+| `testing` | `#0b8043` | Tests / test tooling / coverage |
+| `technical-debt` | `#8b6914` | Known shortcut to be repaid |
 | `chore` | `#ededed` | Maintenance / tooling |
 
 ## 2. Area (component)
@@ -31,23 +35,26 @@ A consistent color scheme aids scanning on the issues/PR boards.
 | `frontend` | `#1d76db` | Display and/or Admin SPA |
 | `backend` | `#5319e7` | NestJS API / workers |
 | `database` | `#006b75` | PostgreSQL / Prisma schema & migrations |
+| `api` | `#0366d6` | REST / WebSocket API contract |
+| `ui/ux` | `#cc99ff` | Design system, components, interaction, accessibility |
 | `google-calendar` | `#fbca04` | Calendar sync / booking integration |
 | `google-meet` | `#f9d0c4` | Meet / conferencing integration |
 | `display` | `#bfdadc` | Kiosk display client |
 | `admin` | `#c2e0c6` | Admin panel |
 | `monitoring` | `#e99695` | Device monitoring / heartbeat |
 | `analytics` | `#d4c5f9` | Analytics & reporting |
-| `security` | `#b60205` | Security-related |
 | `realtime` | `#bfd4f2` | WebSocket / realtime |
+| `security` | `#b60205` | Security-related |
+| `performance` | `#e36209` | Performance / latency / load |
 | `infrastructure` | `#333333` | Docker / Nginx / CI-CD / deployment |
 
 ## 3. Priority
 
 | Label | Color | Description |
 |-------|-------|-------------|
-| `high priority` | `#b60205` | Urgent; address first |
-| `medium priority` | `#fbca04` | Normal priority |
-| `low priority` | `#0e8a16` | Can wait |
+| `high-priority` | `#b60205` | Urgent; address first |
+| `medium-priority` | `#fbca04` | Normal priority |
+| `low-priority` | `#0e8a16` | Can wait |
 
 ## 4. Status / Workflow
 
@@ -55,8 +62,8 @@ A consistent color scheme aids scanning on the issues/PR boards.
 |-------|-------|-------------|
 | `needs-triage` | `#ededed` | Awaiting initial review/triage |
 | `blocked` | `#000000` | Blocked by another issue/dependency |
-| `in progress` | `#fef2c0` | Actively being worked on |
-| `needs review` | `#fbca04` | Ready for review |
+| `in-progress` | `#fef2c0` | Actively being worked on |
+| `needs-review` | `#fbca04` | Ready for review |
 | `wontfix` | `#ffffff` | This will not be worked on |
 | `duplicate` | `#cfd3d7` | Duplicate of another issue |
 
@@ -69,4 +76,17 @@ A consistent color scheme aids scanning on the issues/PR boards.
 
 ---
 
-See `.github/labels.yml` for the syncable definition.
+## Required minimum set (task baseline)
+
+The following labels are required at minimum; all are present above:
+`bug`, `feature`, `enhancement`, `documentation`, `architecture`, `backend`,
+`frontend`, `database`, `api`, `ui/ux`, `security`, `testing`, `performance`,
+`infrastructure`, `technical-debt`, `blocked`, `high-priority`, `low-priority`,
+`research`.
+
+## Applying labels
+
+- **Automated (recommended):** run the **Label Sync** workflow
+  (`.github/workflows/labeler.yml`) via *Actions -> Label Sync -> Run workflow*.
+  It syncs the repo labels to `.github/labels.yml`.
+- **Manual:** *Issues -> Labels -> New label* and enter name/color/description.
