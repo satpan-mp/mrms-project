@@ -11,7 +11,31 @@ noted explicitly.
 ## [Unreleased]
 
 ### Added
-- Placeholder for the next release. Add entries here as work merges into `develop`.
+- **Sprint 1A - Foundation.** Working monorepo application skeleton (no business
+  features yet), per the approved architecture.
+  - Shared packages: `@mrms/config` (ESLint/TS/Tailwind presets + design tokens),
+    `@mrms/types` (API/domain/realtime contracts), `@mrms/api-client` (typed Axios
+    client), `@mrms/realtime` (typed Socket.IO client), `@mrms/hooks` (React Query
+    hooks), `@mrms/ui` (ThemeProvider, tokens, accessible primitives).
+  - Backend (`@mrms/backend`, NestJS): ConfigModule with zod env validation,
+    structured logging (nestjs-pino) with correlation IDs, global ValidationPipe,
+    global exception filter (standard error envelope), CORS, `/api/v1` versioning,
+    Swagger at `/api/docs`; Prisma + Redis modules; Terminus `/health` (database +
+    redis) plus `/version` and `/ping`; minimal BullMQ worker bootstrap.
+  - Database: Prisma schema for `User`/`SystemLog`/`Setting` (foundation subset of
+    Doc 08) + initial migration + idempotent settings seed.
+  - Frontends: `@mrms/admin` (desktop SPA shell + dashboard) and `@mrms/display`
+    (fullscreen kiosk shell) on Vite/React/Tailwind, rendering the approved Design
+    System (light/dark) with a live backend status indicator.
+  - Tooling: Husky + lint-staged + commitlint; committed `pnpm-lock.yaml`.
+  - CI: real lint / typecheck / test / build pipeline; CodeQL, Dependency Review,
+    and Dependabot (from the governance branch).
+  - Docker: multi-stage `api`/`worker`/`web` images and a runnable Compose stack
+    (postgres, redis, migrate, api, worker, web, + dev pgAdmin).
+
+### Notes
+- Verified locally with pnpm: typecheck, lint (0 errors/0 warnings), unit + e2e
+  tests, and full build all pass across the workspace.
 
 ## [0.1.0] - 2026-07-20
 

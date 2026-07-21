@@ -27,9 +27,10 @@ reservations and can create new events, but never edits or deletes existing
 events. App-managed check-in, no-show handling, monitoring, and analytics are
 stored in PostgreSQL.
 
-> **Project status:** Repository initialization (`v0.1.0`). Design documentation
-> is complete; application implementation begins in Sprint 1. See the
-> [Development Roadmap](./docs/18-Development-Roadmap.md).
+> **Project status:** Sprint 1A - Foundation. The monorepo, shared packages,
+> NestJS backend skeleton (health/version/ping), both SPA shells, database
+> migration, CI, and Docker stack are in place; business features follow in
+> later sprints. See the [Development Roadmap](./docs/18-Development-Roadmap.md).
 
 ### Key Capabilities
 
@@ -115,28 +116,37 @@ Details: [Folder Structure](./docs/17-Folder-Structure.md).
 git clone https://github.com/satpan-mp/mrms-project.git
 cd mrms-project
 
-# Bootstrap local env (copies .env.example -> .env, installs deps)
-./scripts/setup.sh          # Windows: pwsh ./scripts/setup.ps1
+# Enable pnpm (via Corepack) and install the workspace
+corepack enable
+pnpm install
 
-# Edit .env and fill in real values (see docs/CONFIGURATION.md)
+# Copy env and fill in real values (see docs/CONFIGURATION.md)
+cp .env.example .env
 ```
 
-> During initialization there is no application code yet; installs and scripts
-> are scaffolding until Sprint 1.
+> The foundation is functional: after `pnpm install`, generate the Prisma client
+> (`pnpm --filter @mrms/backend exec prisma generate`) and bring up datastores
+> via Docker Compose before running the backend.
 
 ---
 
 ## Development
 
 ```bash
-# Workspace quality gates (placeholders until Sprint 1 wiring)
+# Workspace quality gates (run across all packages/apps)
 pnpm run lint
 pnpm run typecheck
 pnpm run test
 pnpm run build
+
+# Run an app in dev (Vite dev servers proxy /api and /realtime to the backend)
+pnpm run dev:backend    # NestJS API on http://localhost:3000 (Swagger at /api/docs)
+pnpm run dev:admin      # Admin SPA on http://localhost:5173
+pnpm run dev:display    # Display SPA on http://localhost:5174
 ```
 
-Local infrastructure via Docker Compose:
+Local infrastructure via Docker Compose (postgres, redis, migrate, api, worker,
+web, + pgAdmin in dev):
 
 ```bash
 docker compose -f docker/docker-compose.yml -f docker/docker-compose.dev.yml up
