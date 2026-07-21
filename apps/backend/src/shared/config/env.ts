@@ -18,6 +18,10 @@ export const envSchema = z.object({
   DATABASE_URL: z.string().min(1, 'DATABASE_URL is required'),
   REDIS_URL: z.string().min(1, 'REDIS_URL is required').default('redis://localhost:6379'),
 
+  // Global rate limiting (per client) — window in milliseconds and max requests.
+  RATE_LIMIT_TTL: z.coerce.number().int().positive().default(60_000),
+  RATE_LIMIT_LIMIT: z.coerce.number().int().positive().default(300),
+
   // Reserved for Sprint 1B (auth). Optional at the foundation stage.
   ADMIN_BOOTSTRAP_EMAIL: z.string().email().optional(),
 });

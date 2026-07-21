@@ -3,8 +3,10 @@ import 'reflect-metadata';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
+import type { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import type { NextFunction, Request, Response } from 'express';
+import compression from 'compression';
+import helmet from 'helmet';
 import { Logger } from 'nestjs-pino';
 
 import { AppModule } from './app.module';
@@ -13,10 +15,21 @@ import { parseCorsOrigins, type Env } from './shared/config/env';
 import { AllExceptionsFilter } from './shared/filters/all-exceptions.filter';
 
 async function bootstrap(): Promise<void> {
-  const app = await NestFactory.create(AppModule, { bufferLogs: true });
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, { bufferLogs: true });
 
   // Structured logging (nestjs-pino) for the app + startup logs.
-  app.useLogger(app.get(Logger));
+  const logger = app.get(Logger);
+  app.useLogger(logger);
+
+  // Last-resort process guards: log (structured) and, for a corrupted process
+  // state, exit so the orchestrator (Docker/K8s) restarts a clean instance.
+  process.on('unhandledRejection', (reason) => {
+    logger.error(`Unhandled promise rejection: ${String(reason)}`, 'Process');
+  });
+  process.on('uncaughtException', (error: Error) => {
+    logger.error(error.stack ?? error.message, 'Process');
+    process.exit(1);
+  });
 
   const config = app.get(ConfigService<Env, true>);
   const isDev = config.get('APP_ENV', { infer: true }) === 'development';
@@ -44,24 +57,18 @@ async function bootstrap(): Promise<void> {
     credentials: true,
   });
 
-  // --- Baseline security hardening (foundation) ---
-  // Full helmet + @nestjs/throttler + compression are scheduled for Sprint 1B
-  // (see docs/certification/SECURITY-CERTIFICATION.md). These no-dependency
-  // controls are applied now:
-  const expressInstance = app.getHttpAdapter().getInstance();
-  // Remove framework fingerprinting (Express sets X-Powered-By by default).
-  expressInstance.disable?.('x-powered-by');
-  // Trust the first proxy hop (Nginx terminates TLS) so client IPs are correct.
-  expressInstance.set?.('trust proxy', 1);
-  // Baseline security response headers (helmet supersedes these in 1B).
-  app.use((_req: Request, res: Response, next: NextFunction) => {
-    res.setHeader('X-Content-Type-Options', 'nosniff');
-    res.setHeader('X-Frame-Options', 'DENY');
-    res.setHeader('Referrer-Policy', 'no-referrer');
-    res.setHeader('X-DNS-Prefetch-Control', 'off');
-    res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
-    next();
-  });
+  // --- Security & transport hardening ---
+  // Security response headers (CSP, HSTS, nosniff, frameguard, etc.). Rate
+  // limiting is applied globally via ThrottlerGuard in AppModule.
+  app.use(helmet());
+  // gzip responses (transparent; safe for JSON APIs).
+  app.use(compression());
+  // Bound request body size to mitigate memory-exhaustion DoS.
+  app.useBodyParser('json', { limit: '1mb' });
+  app.useBodyParser('urlencoded', { limit: '1mb', extended: true });
+  // Remove framework fingerprinting; trust the first proxy hop (Nginx TLS).
+  app.disable('x-powered-by');
+  app.set('trust proxy', 1);
 
   app.enableShutdownHooks();
 
@@ -83,7 +90,6 @@ async function bootstrap(): Promise<void> {
   const port = config.get('APP_PORT', { infer: true });
   await app.listen(port);
 
-  const logger = app.get(Logger);
   logger.log(`${APP_NAME} v${APP_VERSION} listening on http://localhost:${port}/api/v1`, 'Bootstrap');
   if (isDev) {
     logger.log(`Swagger UI available at http://localhost:${port}/api/docs`, 'Bootstrap');
