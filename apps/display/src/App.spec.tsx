@@ -9,7 +9,13 @@ vi.mock('./lib/api', () => ({
   api: {
     system: {
       health: vi.fn().mockResolvedValue({ status: 'ok', info: {}, error: {}, details: {} }),
-      version: vi.fn().mockResolvedValue({ name: 'mrms-backend', version: '0.1.0', environment: 'test', commit: 'test', timestamp: '' }),
+      version: vi.fn().mockResolvedValue({
+        name: 'mrms-backend',
+        version: '0.1.0',
+        environment: 'test',
+        commit: 'test',
+        timestamp: '',
+      }),
       ping: vi.fn().mockResolvedValue({ message: 'pong', timestamp: '' }),
     },
   },

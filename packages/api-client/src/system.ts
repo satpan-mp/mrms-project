@@ -1,7 +1,6 @@
 import type { HealthResponse, PingResponse, VersionResponse } from '@mrms/types';
 import type { AxiosInstance } from 'axios';
 
-
 /**
  * System endpoints (Doc 09): liveness/readiness, version metadata, and ping.
  * These are the only endpoints wired in Sprint 1A; resource endpoints are added

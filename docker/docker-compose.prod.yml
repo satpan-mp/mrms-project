@@ -40,5 +40,5 @@ services:
     restart: always
     # TLS termination: mount certs and expose 443 in Phase P8.
     ports:
-      - "80:80"
+      - '80:80'
       # - "443:443"

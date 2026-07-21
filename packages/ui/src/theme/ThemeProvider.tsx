@@ -71,9 +71,7 @@ export function ThemeProvider({
   defaultTheme = 'system',
   storageKey = 'mrms-theme',
 }: ThemeProviderProps): JSX.Element {
-  const [theme, setThemeState] = useState<Theme>(
-    () => readStoredTheme(storageKey) ?? defaultTheme,
-  );
+  const [theme, setThemeState] = useState<Theme>(() => readStoredTheme(storageKey) ?? defaultTheme);
 
   const resolvedTheme: ResolvedTheme = theme === 'system' ? getSystemTheme() : theme;
 

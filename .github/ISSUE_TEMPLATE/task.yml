@@ -1,7 +1,7 @@
 name: "\U0001F4CB Task"
 description: A concrete engineering task (implementation, chore, or spike).
-title: "<type>: <short task description>"
-labels: ["task", "needs-triage"]
+title: '<type>: <short task description>'
+labels: ['task', 'needs-triage']
 body:
   - type: textarea
     id: description
@@ -33,19 +33,19 @@ body:
     attributes:
       label: Sprint / Milestone
       options:
-        - "Sprint 1 - Foundation"
-        - "Sprint 2 - Auth & CI"
-        - "Sprint 3 - Google Sync + Rooms"
-        - "Sprint 4 - Status + Schedule API"
-        - "Sprint 5 - Realtime + Display"
-        - "Sprint 6 - Display Polish + Kiosk"
-        - "Sprint 7 - Booking"
-        - "Sprint 8 - Check-in + No-show"
-        - "Sprint 9 - Conferencing"
-        - "Sprint 10 - Admin + Monitoring"
-        - "Sprint 11 - Analytics + Announcements"
-        - "Sprint 12 - Hardening + Rollout"
-        - "Backlog / Unscheduled"
+        - 'Sprint 1 - Foundation'
+        - 'Sprint 2 - Auth & CI'
+        - 'Sprint 3 - Google Sync + Rooms'
+        - 'Sprint 4 - Status + Schedule API'
+        - 'Sprint 5 - Realtime + Display'
+        - 'Sprint 6 - Display Polish + Kiosk'
+        - 'Sprint 7 - Booking'
+        - 'Sprint 8 - Check-in + No-show'
+        - 'Sprint 9 - Conferencing'
+        - 'Sprint 10 - Admin + Monitoring'
+        - 'Sprint 11 - Analytics + Announcements'
+        - 'Sprint 12 - Hardening + Rollout'
+        - 'Backlog / Unscheduled'
     validations:
       required: true
   - type: textarea

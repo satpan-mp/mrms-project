@@ -1,7 +1,7 @@
 name: "\U00002728 Feature Request"
 description: Propose a new capability or user-facing feature for MRMS.
-title: "feat: <short description of the feature>"
-labels: ["feature", "needs-triage"]
+title: 'feat: <short description of the feature>'
+labels: ['feature', 'needs-triage']
 body:
   - type: textarea
     id: problem

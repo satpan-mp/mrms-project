@@ -1,7 +1,7 @@
 name: "\U00002753 Question"
 description: Ask a question about MRMS usage, design, or behavior.
-title: "docs: <short question summary>"
-labels: ["question", "needs-triage"]
+title: 'docs: <short question summary>'
+labels: ['question', 'needs-triage']
 body:
   - type: markdown
     attributes:

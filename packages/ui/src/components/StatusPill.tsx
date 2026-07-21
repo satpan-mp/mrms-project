@@ -1,7 +1,6 @@
 import type { RoomStatus } from '@mrms/types';
 import { CheckCircle, Clock, DotOutline, Users, Wrench, type Icon } from '@phosphor-icons/react';
 
-
 import { cn } from '../lib/cn';
 
 /**

@@ -13,14 +13,7 @@ module.exports = {
     sourceType: 'module',
   },
   extends: ['eslint:recommended', 'prettier'],
-  ignorePatterns: [
-    'node_modules/',
-    'dist/',
-    'build/',
-    'out/',
-    'coverage/',
-    '**/*.d.ts',
-  ],
+  ignorePatterns: ['node_modules/', 'dist/', 'build/', 'out/', 'coverage/', '**/*.d.ts'],
   rules: {
     'no-console': 'warn',
     'no-debugger': 'error',

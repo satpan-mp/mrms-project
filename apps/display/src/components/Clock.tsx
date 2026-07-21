@@ -3,7 +3,11 @@ import { useClock } from '../hooks/useClock';
 /** Large, TV-readable realtime clock for the kiosk header. */
 export function Clock(): JSX.Element {
   const now = useClock();
-  const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  const time = now.toLocaleTimeString([], {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  });
   const date = now.toLocaleDateString([], {
     weekday: 'long',
     year: 'numeric',

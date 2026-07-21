@@ -58,6 +58,20 @@ Manual testing notes:
 
 None.
 
+## Impact Assessment
+
+<!-- Confirm each dimension. Mark "None" where not applicable, with a one-line reason. -->
+
+- [ ] **Architecture impact** — none / describe (new ADR required? cross-layer deps?):
+- [ ] **Database impact** — none / migration + rollback + backward-compat notes:
+- [ ] **API impact** — none / OpenAPI + Swagger + DTO + examples + error responses updated:
+- [ ] **Security impact** — none / authn, authz, validation, rate limiting, secrets, OWASP considered:
+- [ ] **Performance impact** — none / query efficiency, bundle size, caching, memory, startup:
+- [ ] **Testing evidence** — unit / integration / e2e results (coverage not decreased):
+- [ ] **Documentation updated** — none / which docs:
+- [ ] **Rollback strategy** — how to safely revert this change:
+- [ ] **Technical debt** — none / registered with TD-ID + priority + owner + milestone:
+
 ## Checklist
 
 - [ ] Title follows Conventional Commits
