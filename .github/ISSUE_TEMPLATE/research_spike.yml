@@ -1,0 +1,75 @@
+name: "\U0001F52C Research / Spike"
+description: A time-boxed investigation to reduce uncertainty before implementation.
+title: "research: <question to answer>"
+labels: ["research", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        A spike is a **time-boxed** investigation that produces a decision or a
+        recommendation - not production code. Capture the outcome in an ADR/RFC or
+        the Decision Log when done.
+  - type: textarea
+    id: question
+    attributes:
+      label: Question / Unknown
+      description: What specifically are we trying to learn or decide?
+    validations:
+      required: true
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Why now?
+      description: What is blocked or at risk until this is answered?
+    validations:
+      required: true
+  - type: input
+    id: timebox
+    attributes:
+      label: Time-box
+      description: Maximum effort before we stop and report findings.
+      placeholder: e.g., 1 day / 2 days
+    validations:
+      required: true
+  - type: textarea
+    id: approach
+    attributes:
+      label: Approach / Options to Explore
+      description: Prototypes, benchmarks, docs to read, vendors/APIs to test.
+    validations:
+      required: false
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Expected Deliverable
+      description: The artifact this spike produces.
+      value: |
+        - [ ] Findings summary
+        - [ ] Recommendation / decision
+        - [ ] ADR / RFC / Decision Log entry (if architecturally significant)
+        - [ ] Follow-up implementation issue(s) created
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Related Area
+      options:
+        - Google Calendar / OAuth
+        - Google Meet / Conferencing
+        - Realtime / WebSocket scale
+        - Kiosk / NUC / Device control
+        - Database / Performance
+        - Security
+        - Infrastructure / Deployment
+        - Design System / UX
+        - Other
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Pre-submission Checklist
+      options:
+        - label: I searched existing issues/ADRs and this is not already answered.
+          required: true

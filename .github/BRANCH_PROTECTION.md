@@ -29,15 +29,21 @@ Request that satisfies the rules below.
 - [x] **Require a pull request before merging** (no direct pushes to `main`).
   - [x] Require **at least 2 approving reviews**.
   - [x] **Dismiss stale approvals** when new commits are pushed.
-  - [x] Require review from **Code Owners** (see `.github/CODEOWNERS` once added).
+  - [x] Require review from **Code Owners** (see `.github/CODEOWNERS`).
   - [x] Require **conversation resolution** before merging.
 - [x] **Require status checks to pass before merging** and require branches to be
-      **up to date** before merging. Required checks:
-  - `CI / lint`
-  - `CI / typecheck`
-  - `CI / test`
-  - `CI / build`
-  - `CI / docker-build`
+      **up to date** before merging. Required checks (names are
+      `<workflow> / <job>` exactly as GitHub reports them):
+  - `CI / Lint`
+  - `CI / Typecheck`
+  - `CI / Test`
+  - `CI / Build`
+  - `Docker / Docker Build`
+  - `CodeQL / Analyze`
+
+  > Add each required check only **after** it has run at least once on a PR, so
+  > GitHub can resolve the exact name. During the initialization phase these jobs
+  > succeed as no-ops; they become enforcing as implementation lands (Sprint 1+).
 - [x] **Require linear history** (squash or rebase merges only; no merge commits).
 - [x] **Require signed commits** *(optional but recommended — see §5)*.
 - [x] **Include administrators** (rules apply to admins too).
@@ -114,13 +120,18 @@ The required checks map to the CI workflow in
 early setup the checks are placeholders that succeed; they become enforcing as
 implementation lands (Sprint 1+).
 
-| Required check | Source job |
-|----------------|-----------|
-| `CI / lint` | `ci.yml` -> `lint` |
-| `CI / typecheck` | `ci.yml` -> `typecheck` |
-| `CI / test` | `ci.yml` -> `test` |
-| `CI / build` | `ci.yml` -> `build` |
-| `CI / docker-build` | `docker.yml` -> `docker-build` |
+| Required check | Source workflow -> job |
+|----------------|------------------------|
+| `CI / Lint` | `ci.yml` -> `lint` (name: "Lint") |
+| `CI / Typecheck` | `ci.yml` -> `typecheck` (name: "Typecheck") |
+| `CI / Test` | `ci.yml` -> `test` (name: "Test") |
+| `CI / Build` | `ci.yml` -> `build` (name: "Build") |
+| `Docker / Docker Build` | `docker.yml` -> `docker-build` (name: "Docker Build") |
+| `CodeQL / Analyze` | `codeql.yml` -> `analyze` (name: "Analyze") |
+
+> Dependency Review (`dependency-review.yml`) also runs on PRs; add
+> `Dependency Review / dependency-review` as a required check once dependencies
+> exist (it is a no-op until a manifest/lockfile is present).
 
 ---
 
