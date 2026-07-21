@@ -36,7 +36,8 @@ mrms-project/
 │   ├── nginx/              # reverse proxy config (HTTP + WS upgrade, TLS)
 │   └── kiosk/              # NUC Chrome kiosk + device agent scripts
 ├── scripts/                # dev/ops helper scripts (setup, seed, release)
-├── docs/                   # 01..19 design documents (this set)
+├── docs/                   # design docs 01-19 + README index, adr/, rfc/, decisions/,
+│                           # backlog/, process/, standards/, wiki/, and strategy/ops docs
 ├── .github/                # workflows (CI/CD), ISSUE_TEMPLATE/, PR template, labels
 ├── .vscode/                # workspace settings & recommended extensions
 ├── README.md
