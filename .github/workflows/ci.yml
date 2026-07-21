@@ -72,6 +72,15 @@ jobs:
         run: pnpm run test
       - name: Backend e2e (mocked datastores)
         run: pnpm --filter @mrms/backend run test:e2e
+      - name: Backend coverage (enforces ratchet-floor thresholds)
+        run: pnpm --filter @mrms/backend run test:cov
+      - name: Upload backend coverage (lcov)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-coverage
+          path: apps/backend/coverage/lcov.info
+          if-no-files-found: ignore
 
   build:
     name: Build

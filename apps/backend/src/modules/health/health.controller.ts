@@ -1,9 +1,9 @@
 import { Controller, Get } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { HealthCheck, type HealthCheckService, type HealthCheckResult } from '@nestjs/terminus';
+import { HealthCheck, HealthCheckService, type HealthCheckResult } from '@nestjs/terminus';
 
-import { type PrismaHealthIndicator } from './indicators/prisma.health';
-import { type RedisHealthIndicator } from './indicators/redis.health';
+import { PrismaHealthIndicator } from './indicators/prisma.health';
+import { RedisHealthIndicator } from './indicators/redis.health';
 
 /** Liveness/readiness endpoint (Doc 09) aggregating datastore health. */
 @ApiTags('system')

@@ -25,6 +25,7 @@ once accepted; a superseding decision gets a new ADR that references the old one
 | [ADR-007](./ADR-007-why-prisma-orm.md) | Why Prisma ORM | Accepted | 2026-07-20 |
 | [ADR-008](./ADR-008-clean-architecture-ddd.md) | Why Clean Architecture + DDD | Accepted | 2026-07-20 |
 | [ADR-009](./ADR-009-foundation-tooling.md) | Foundation tooling: pnpm workspaces, Zod env validation, pino logging, split test runners | Accepted | 2026-07-21 |
+| [ADR-010](./ADR-010-value-imports-for-nestjs-di.md) | Value imports for NestJS DI (disable consistent-type-imports on backend) | Accepted | 2026-07-21 |
 
 ## Statuses
 

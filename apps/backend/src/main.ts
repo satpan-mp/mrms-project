@@ -4,6 +4,7 @@ import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import type { NextFunction, Request, Response } from 'express';
 import { Logger } from 'nestjs-pino';
 
 import { AppModule } from './app.module';
@@ -41,6 +42,25 @@ async function bootstrap(): Promise<void> {
   app.enableCors({
     origin: parseCorsOrigins(config.get('CORS_ORIGINS', { infer: true })),
     credentials: true,
+  });
+
+  // --- Baseline security hardening (foundation) ---
+  // Full helmet + @nestjs/throttler + compression are scheduled for Sprint 1B
+  // (see docs/certification/SECURITY-CERTIFICATION.md). These no-dependency
+  // controls are applied now:
+  const expressInstance = app.getHttpAdapter().getInstance();
+  // Remove framework fingerprinting (Express sets X-Powered-By by default).
+  expressInstance.disable?.('x-powered-by');
+  // Trust the first proxy hop (Nginx terminates TLS) so client IPs are correct.
+  expressInstance.set?.('trust proxy', 1);
+  // Baseline security response headers (helmet supersedes these in 1B).
+  app.use((_req: Request, res: Response, next: NextFunction) => {
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-Frame-Options', 'DENY');
+    res.setHeader('Referrer-Policy', 'no-referrer');
+    res.setHeader('X-DNS-Prefetch-Control', 'off');
+    res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
+    next();
   });
 
   app.enableShutdownHooks();

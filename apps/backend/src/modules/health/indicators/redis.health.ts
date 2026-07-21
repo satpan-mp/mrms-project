@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { HealthCheckError, HealthIndicator, type HealthIndicatorResult } from '@nestjs/terminus';
 
-import { type RedisService } from '../../../shared/redis/redis.service';
+import { RedisService } from '../../../shared/redis/redis.service';
 
 /** Terminus indicator that verifies Redis connectivity (PING/PONG). */
 @Injectable()

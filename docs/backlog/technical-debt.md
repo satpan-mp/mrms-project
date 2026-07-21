@@ -26,6 +26,9 @@ Each item: what the debt is, why it exists, and the plan to repay it.
 | TD-014 | No dependency-audit / bundle-size gates in CI | Kept foundation CI lean | Add `pnpm audit` (advisory) + bundle-size checks to CI | M | Open |
 | TD-015 | Docker Compose stack not runtime-validated | No Docker daemon in the build sandbox | Run the compose smoke test on a Docker-capable host / CI runner (see [report](../reports/sprint-1a/docker-compose-validation.md)) | H | Open |
 | TD-016 | UI screenshots not generated | Playwright browser not fully provisioned + shell became unresponsive in sandbox | Regenerate via committed `tools/screenshots/capture.mjs` on a Playwright-capable host | L | Open |
+| TD-017 | Enterprise HTTP hardening not fully installed (helmet, `@nestjs/throttler`, compression, body-size limit, log redaction) | Avoided changing the runtime dependency graph during the pre-Sprint-1B certification freeze; baseline no-dep headers applied instead | Install + wire at Sprint 1B start (exact snippets in [security-hardening](../reports/pre-sprint-1b/security-hardening.md)) | M | Open |
+| TD-018 | Frontend/shared-package coverage not measured/enforced | `@vitest/coverage-v8` not yet a dev dependency in SPAs/packages | Add coverage provider + `test:cov` scripts + thresholds; raise ratchet per sprint | M | Open |
+| TD-019 | Backend DI silently breakable by lint autofix (RESOLVED) | `consistent-type-imports` (inline) rewrote injected imports to type-only, breaking NestJS DI; caused red CI | Disabled the rule for the backend preset (ADR-010); injected classes must be value imports | H | ✅ Resolved (cert branch) |
 
 ## Policy
 
