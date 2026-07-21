@@ -1,6 +1,6 @@
 {
-  "//": "Root tsconfig for editor tooling only. Each package/app owns its build/typecheck config and is checked independently via `pnpm -r typecheck`.",
-  "extends": "@mrms/config/tsconfig/base.json",
+  "//": "Root tsconfig for editor/tooling only (relative extends so esbuild/vite dep-scan resolves it without package-exports support). Each package/app owns its build/typecheck config and is checked independently via `pnpm -r typecheck`.",
+  "extends": "./packages/config/tsconfig/base.json",
   "compilerOptions": {
     "noEmit": true
   },

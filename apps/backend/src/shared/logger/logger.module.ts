@@ -30,8 +30,8 @@ import type { Env } from '../config/env';
               res.setHeader('X-Correlation-Id', id);
               return id;
             },
-            customProps: (req: IncomingMessage & { id?: string }) => ({
-              correlationId: req.id,
+            customProps: (req: IncomingMessage) => ({
+              correlationId: String((req as { id?: unknown }).id ?? ''),
             }),
             redact: {
               paths: [

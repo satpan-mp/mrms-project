@@ -1,6 +1,6 @@
+import type { ClientToServerEvents, ServerToClientEvents } from '@mrms/types';
 import { io, type Socket } from 'socket.io-client';
 
-import type { ClientToServerEvents, ServerToClientEvents } from '@mrms/types';
 
 export type MrmsSocket = Socket<ServerToClientEvents, ClientToServerEvents>;
 

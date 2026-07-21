@@ -1,7 +1,7 @@
-import { readKioskConfig } from '../lib/kioskConfig';
 
 import { Clock } from '../components/Clock';
 import { ConnectionStatus } from '../components/ConnectionStatus';
+import { readKioskConfig } from '../lib/kioskConfig';
 
 /**
  * Fullscreen kiosk room display (foundation). Renders the fixed no-scroll

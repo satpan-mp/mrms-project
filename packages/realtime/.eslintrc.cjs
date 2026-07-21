@@ -1,1 +1,1 @@
-module.exports = { extends: ['@mrms/config/eslint/base'] };
+module.exports = { extends: [require.resolve('@mrms/config/eslint/base')] };

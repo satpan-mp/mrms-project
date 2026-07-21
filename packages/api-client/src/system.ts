@@ -1,6 +1,6 @@
+import type { HealthResponse, PingResponse, VersionResponse } from '@mrms/types';
 import type { AxiosInstance } from 'axios';
 
-import type { HealthResponse, PingResponse, VersionResponse } from '@mrms/types';
 
 /**
  * System endpoints (Doc 09): liveness/readiness, version metadata, and ping.

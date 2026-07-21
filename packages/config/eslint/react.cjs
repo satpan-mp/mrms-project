@@ -2,7 +2,7 @@
 /** @type {import('eslint').Linter.Config} */
 module.exports = {
   extends: [
-    '@mrms/config/eslint/base',
+    require.resolve('./base.cjs'),
     'plugin:react/recommended',
     'plugin:react-hooks/recommended',
     'plugin:jsx-a11y/recommended',

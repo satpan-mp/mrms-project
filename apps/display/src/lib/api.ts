@@ -1,6 +1,7 @@
 import { createApiClient } from '@mrms/api-client';
 
 import { env } from '../config/env';
+
 import { readKioskConfig } from './kioskConfig';
 
 /**

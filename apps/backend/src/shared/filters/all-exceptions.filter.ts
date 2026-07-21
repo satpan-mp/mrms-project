@@ -1,12 +1,12 @@
+import type { ApiErrorBody } from '@mrms/types';
 import {
-  ArgumentsHost,
+  type ArgumentsHost,
   Catch,
   HttpException,
   HttpStatus,
   Logger,
   type ExceptionFilter,
 } from '@nestjs/common';
-import type { ApiErrorBody } from '@mrms/types';
 import type { Request, Response } from 'express';
 
 /**

@@ -13,8 +13,8 @@
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint \"src/**/*.ts\" \"src/**/*.tsx\"",
-    "lint:fix": "eslint \"src/**/*.ts\" \"src/**/*.tsx\" --fix",
+    "lint": "eslint \"src/**/*.{ts,tsx}\"",
+    "lint:fix": "eslint \"src/**/*.{ts,tsx}\" --fix",
     "test": "echo \"@mrms/hooks: covered via app component tests\" && exit 0"
   },
   "dependencies": {

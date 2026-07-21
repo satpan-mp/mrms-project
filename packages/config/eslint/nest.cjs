@@ -1,7 +1,7 @@
 // @mrms/config - NestJS ESLint preset (extends base).
 /** @type {import('eslint').Linter.Config} */
 module.exports = {
-  extends: ['@mrms/config/eslint/base'],
+  extends: [require.resolve('./base.cjs')],
   env: {
     node: true,
     jest: true,

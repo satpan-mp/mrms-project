@@ -25,6 +25,28 @@ function getSystemTheme(): ResolvedTheme {
   return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 }
 
+/**
+ * localStorage can be undefined or throw (SSR, privacy modes, locked-down kiosk
+ * browsers). Access it defensively so theming never crashes the app.
+ */
+function readStoredTheme(storageKey: string): Theme | null {
+  try {
+    if (typeof window === 'undefined' || !window.localStorage) return null;
+    return window.localStorage.getItem(storageKey) as Theme | null;
+  } catch {
+    return null;
+  }
+}
+
+function writeStoredTheme(storageKey: string, theme: Theme): void {
+  try {
+    if (typeof window === 'undefined' || !window.localStorage) return;
+    window.localStorage.setItem(storageKey, theme);
+  } catch {
+    // Persistence is best-effort; ignore storage failures.
+  }
+}
+
 function applyThemeClass(resolved: ResolvedTheme): void {
   if (typeof document === 'undefined') return;
   const root = document.documentElement;
@@ -49,10 +71,9 @@ export function ThemeProvider({
   defaultTheme = 'system',
   storageKey = 'mrms-theme',
 }: ThemeProviderProps): JSX.Element {
-  const [theme, setThemeState] = useState<Theme>(() => {
-    if (typeof window === 'undefined') return defaultTheme;
-    return (window.localStorage.getItem(storageKey) as Theme | null) ?? defaultTheme;
-  });
+  const [theme, setThemeState] = useState<Theme>(
+    () => readStoredTheme(storageKey) ?? defaultTheme,
+  );
 
   const resolvedTheme: ResolvedTheme = theme === 'system' ? getSystemTheme() : theme;
 
@@ -71,7 +92,7 @@ export function ThemeProvider({
   const setTheme = useCallback(
     (next: Theme) => {
       setThemeState(next);
-      if (typeof window !== 'undefined') window.localStorage.setItem(storageKey, next);
+      writeStoredTheme(storageKey, next);
     },
     [storageKey],
   );
@@ -88,6 +109,7 @@ export function ThemeProvider({
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- hook colocated with its provider by design
 export function useTheme(): ThemeContextValue {
   const ctx = useContext(ThemeContext);
   if (!ctx) throw new Error('useTheme must be used within a <ThemeProvider>.');

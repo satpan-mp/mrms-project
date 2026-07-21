@@ -39,7 +39,7 @@ async function bootstrap(): Promise<void> {
 
   // CORS for the Admin/Display SPAs.
   app.enableCors({
-    origin: parseCorsOrigins(config),
+    origin: parseCorsOrigins(config.get('CORS_ORIGINS', { infer: true })),
     credentials: true,
   });
 

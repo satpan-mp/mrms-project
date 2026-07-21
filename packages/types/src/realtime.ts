@@ -4,8 +4,7 @@
  * the client and server never drift. Sprint 1A ships the contract only; the
  * gateway/handlers are implemented in Sprint 1E (P2).
  */
-import type { DeviceStatus } from './enums';
-import type { RoomStatus } from './enums';
+import type { DeviceStatus, RoomStatus } from './enums';
 
 /** Realtime channels (join rules enforced server-side, Doc 09 §4.1). */
 export type RealtimeChannel =

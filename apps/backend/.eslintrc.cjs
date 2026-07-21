@@ -1,5 +1,5 @@
 module.exports = {
-  extends: ['@mrms/config/eslint/nest'],
+  extends: [require.resolve('@mrms/config/eslint/nest')],
   parserOptions: {
     project: false,
   },

@@ -1,1 +1,1 @@
-module.exports = { extends: ['@mrms/config/eslint/react'] };
+module.exports = { extends: [require.resolve('@mrms/config/eslint/react')] };

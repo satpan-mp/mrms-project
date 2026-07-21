@@ -39,9 +39,10 @@ export function validateEnv(config: Record<string, unknown>): Env {
   return parsed.data;
 }
 
-/** Parsed CORS origins as an array. */
-export function parseCorsOrigins(env: Env): string[] {
-  return env.CORS_ORIGINS.split(',')
+/** Parse a comma-separated CORS origins string into a trimmed, non-empty array. */
+export function parseCorsOrigins(corsOrigins: string): string[] {
+  return corsOrigins
+    .split(',')
     .map((origin) => origin.trim())
     .filter(Boolean);
 }

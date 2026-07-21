@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { HealthCheckError, HealthIndicator, type HealthIndicatorResult } from '@nestjs/terminus';
 
-import { PrismaService } from '../../../shared/prisma/prisma.service';
+import { type PrismaService } from '../../../shared/prisma/prisma.service';
 
 /** Terminus indicator that verifies PostgreSQL connectivity via Prisma. */
 @Injectable()
