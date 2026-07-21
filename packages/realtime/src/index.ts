@@ -1,7 +1,6 @@
 import type { ClientToServerEvents, ServerToClientEvents } from '@mrms/types';
 import { io, type Socket } from 'socket.io-client';
 
-
 export type MrmsSocket = Socket<ServerToClientEvents, ClientToServerEvents>;
 
 export interface RealtimeClientOptions {

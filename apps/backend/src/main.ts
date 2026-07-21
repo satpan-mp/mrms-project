@@ -90,7 +90,10 @@ async function bootstrap(): Promise<void> {
   const port = config.get('APP_PORT', { infer: true });
   await app.listen(port);
 
-  logger.log(`${APP_NAME} v${APP_VERSION} listening on http://localhost:${port}/api/v1`, 'Bootstrap');
+  logger.log(
+    `${APP_NAME} v${APP_VERSION} listening on http://localhost:${port}/api/v1`,
+    'Bootstrap',
+  );
   if (isDev) {
     logger.log(`Swagger UI available at http://localhost:${port}/api/docs`, 'Bootstrap');
   }

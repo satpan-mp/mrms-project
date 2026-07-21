@@ -13,8 +13,7 @@ export function DashboardPage(): JSX.Element {
       <header className="space-y-1">
         <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
         <p className="text-muted-foreground">
-          Administration foundation. Rooms, monitoring, and analytics arrive in
-          later sprints.
+          Administration foundation. Rooms, monitoring, and analytics arrive in later sprints.
         </p>
       </header>
 

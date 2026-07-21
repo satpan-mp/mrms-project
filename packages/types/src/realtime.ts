@@ -7,11 +7,7 @@
 import type { DeviceStatus, RoomStatus } from './enums';
 
 /** Realtime channels (join rules enforced server-side, Doc 09 §4.1). */
-export type RealtimeChannel =
-  | `room:${string}`
-  | `site:${string}`
-  | 'global'
-  | 'admin';
+export type RealtimeChannel = `room:${string}` | `site:${string}` | 'global' | 'admin';
 
 export interface RoomStatusEvent {
   roomId: string;

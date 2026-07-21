@@ -1,4 +1,3 @@
-
 import { Clock } from '../components/Clock';
 import { ConnectionStatus } from '../components/ConnectionStatus';
 import { readKioskConfig } from '../lib/kioskConfig';

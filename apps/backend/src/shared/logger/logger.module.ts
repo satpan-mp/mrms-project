@@ -43,7 +43,10 @@ import type { Env } from '../config/env';
               censor: '[redacted]',
             },
             transport: isDev
-              ? { target: 'pino-pretty', options: { singleLine: true, translateTime: 'SYS:standard' } }
+              ? {
+                  target: 'pino-pretty',
+                  options: { singleLine: true, translateTime: 'SYS:standard' },
+                }
               : undefined,
           },
         };

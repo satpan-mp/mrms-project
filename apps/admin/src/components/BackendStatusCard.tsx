@@ -25,8 +25,7 @@ export function BackendStatusCard(): JSX.Element {
           </div>
         ) : health.isError ? (
           <p role="alert" className="text-sm text-error">
-            Backend unreachable. Ensure the API is running, then it will reconnect
-            automatically.
+            Backend unreachable. Ensure the API is running, then it will reconnect automatically.
           </p>
         ) : (
           <div className="space-y-1 text-sm">

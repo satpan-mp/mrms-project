@@ -9,10 +9,13 @@ export function useClock(): Date {
 
   useEffect(() => {
     let intervalId: ReturnType<typeof setInterval> | undefined;
-    const align = setTimeout(() => {
-      setNow(new Date());
-      intervalId = setInterval(() => setNow(new Date()), 1_000);
-    }, 1_000 - (Date.now() % 1_000));
+    const align = setTimeout(
+      () => {
+        setNow(new Date());
+        intervalId = setInterval(() => setNow(new Date()), 1_000);
+      },
+      1_000 - (Date.now() % 1_000),
+    );
 
     return () => {
       clearTimeout(align);

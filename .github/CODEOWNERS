@@ -1,0 +1,33 @@
+# MRMS Code Owners
+# Owners are automatically requested for review on matching paths.
+# Update as the team grows (e.g., dedicated backend/frontend/devops squads).
+
+# Default owner for everything.
+*                                   @satpan-mp
+
+# Backend (NestJS) + worker
+/apps/backend/                      @satpan-mp
+/apps/backend/prisma/               @satpan-mp
+
+# Frontends
+/apps/admin/                        @satpan-mp
+/apps/display/                      @satpan-mp
+
+# Shared packages
+/packages/                          @satpan-mp
+/packages/types/                    @satpan-mp
+/packages/ui/                       @satpan-mp
+
+# Infrastructure / DevOps / CI
+/docker/                            @satpan-mp
+/infrastructure/                    @satpan-mp
+/.github/                           @satpan-mp
+/.github/workflows/                 @satpan-mp
+
+# Database strategy & migrations
+/apps/backend/prisma/schema.prisma  @satpan-mp
+/docs/08-Database-Schema.md         @satpan-mp
+
+# Documentation & ADRs
+/docs/                              @satpan-mp
+/docs/adr/                          @satpan-mp

@@ -1,7 +1,7 @@
 name: "\U0001F41B Bug Report"
 description: Report a defect or unexpected behavior in MRMS.
-title: "fix: <short description of the bug>"
-labels: ["bug", "needs-triage"]
+title: 'fix: <short description of the bug>'
+labels: ['bug', 'needs-triage']
 body:
   - type: markdown
     attributes:

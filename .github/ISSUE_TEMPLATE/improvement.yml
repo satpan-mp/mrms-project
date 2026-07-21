@@ -1,7 +1,7 @@
 name: "\U0001F527 Improvement"
 description: Enhance existing functionality, performance, or developer experience.
-title: "refactor: <short description of the improvement>"
-labels: ["enhancement", "needs-triage"]
+title: 'refactor: <short description of the improvement>'
+labels: ['enhancement', 'needs-triage']
 body:
   - type: textarea
     id: current
