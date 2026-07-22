@@ -84,7 +84,15 @@ export class AllExceptionsFilter implements ExceptionFilter {
         };
       }
       const message = typeof rawMessage === 'string' ? rawMessage : fallbackMessage;
-      return { status, code: this.codeForStatus(status), message };
+      // Preserve a stable domain error code/details when the HttpException body
+      // carries them (set by the DomainError -> HttpException mapper); otherwise
+      // fall back to the status-derived code.
+      const code = typeof record.code === 'string' ? record.code : this.codeForStatus(status);
+      const details =
+        record.details && typeof record.details === 'object'
+          ? (record.details as Record<string, unknown>)
+          : undefined;
+      return { status, code, message, ...(details ? { details } : {}) };
     }
     return { status, code: this.codeForStatus(status), message: res || fallbackMessage };
   }

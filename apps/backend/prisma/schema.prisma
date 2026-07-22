@@ -1,12 +1,18 @@
-// MRMS Prisma schema.
-// Source of record: docs/08-Database-Schema.md (full model) and docs/07-Database-ERD.md.
+// MRMS Prisma schema — Enterprise Database Freeze (Phase 1).
 //
-// Sprint 1A (foundation) intentionally materializes ONLY the tables needed for
-// the platform foundation and the upcoming authentication work: identity
-// (User + UserRole), the audit/system log (SystemLog + LogType), and runtime
-// Settings. The remaining business models (Site, Room, Facility, MeetingCache,
-// Booking, CheckIn, Device, etc.) are added in their respective sprints exactly
-// as specified in Doc 08. Fields below match Doc 08 one-to-one.
+// Source of truth: the approved Database Architecture Freeze + Phase 1
+// Implementation Blueprint. This schema EXTENDS the Sprint-1A foundation
+// (users, system_logs, settings) additively — those three tables and the
+// UserRole/LogType enums are preserved exactly as first migrated.
+//
+// Conventions (frozen):
+// - snake_case columns/tables via @map/@@map; camelCase Prisma fields.
+// - TEXT primary keys (String) for FK compatibility with the foundation.
+// - UUID v7 (@default(uuid(7))) on high-insert tables; v4 (uuid()) elsewhere.
+// - New timestamp columns use timestamptz(6); legacy foundation columns are
+//   left as-is (timestamp(3)) to keep this migration additive.
+// - Raw-SQL-only objects (NULLS NOT DISTINCT / partial unique / CHECK /
+//   fillfactor) live in the migration, NOT here (Prisma cannot express them).
 
 datasource db {
   provider = "postgresql"
@@ -17,6 +23,11 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// ===========================================================================
+// Enums
+// ===========================================================================
+
+// --- existing (foundation) — DO NOT recreate ---
 enum UserRole {
   ADMINISTRATOR
   EMPLOYEE
@@ -28,7 +39,124 @@ enum LogType {
   AUDIT
 }
 
-/// Application user (identity provided by Google Workspace OAuth - Doc 12).
+// --- new (Phase 1) ---
+enum RoomStatus {
+  AVAILABLE
+  OCCUPIED
+  STARTING_SOON
+  MAINTENANCE
+  RESERVED
+}
+
+enum MeetingSource {
+  GOOGLE_CALENDAR
+  APP_BOOKING
+}
+
+enum ResponseStatus {
+  ACCEPTED
+  DECLINED
+  TENTATIVE
+  NEEDS_ACTION
+}
+
+enum BookingStatus {
+  CREATED
+  SYNCED
+  FAILED
+  CANCELLED_EXTERNALLY
+}
+
+enum CheckInState {
+  PENDING
+  CHECKED_IN
+  NO_SHOW
+  RELEASED
+}
+
+enum DeviceStatus {
+  ONLINE
+  OFFLINE
+  DEGRADED
+  UNKNOWN
+}
+
+enum AnnouncementScope {
+  GLOBAL
+  SITE
+  ROOM
+}
+
+enum SyncStatus {
+  SUCCESS
+  PARTIAL
+  FAILED
+}
+
+enum AnalyticsGranularity {
+  DAY
+  MONTH
+  YEAR
+}
+
+enum AnalyticsScopeType {
+  ROOM
+  SITE
+  ORG
+}
+
+enum CalendarProviderType {
+  GOOGLE
+  MICROSOFT
+  EXCHANGE
+  ICAL
+}
+
+// ===========================================================================
+// Identity & Access
+// ===========================================================================
+
+model Organization {
+  id              String    @id @default(uuid())
+  slug            String    @unique
+  name            String
+  defaultTimezone String    @default("Asia/Makassar") @map("default_timezone")
+  active          Boolean   @default(true)
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt       DateTime? @map("deleted_at") @db.Timestamptz(6)
+
+  sites               Site[]
+  rooms               Room[]
+  calendarProviders   CalendarProvider[]
+  userRoles           UserRoleAssignment[]
+  announcementTargets AnnouncementTarget[]
+
+  @@map("organizations")
+}
+
+model Site {
+  id             String    @id @default(uuid())
+  organizationId String    @map("organization_id")
+  code           String
+  name           String
+  timezone       String    @default("Asia/Makassar")
+  active         Boolean   @default(true)
+  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt      DateTime? @map("deleted_at") @db.Timestamptz(6)
+
+  organization        Organization         @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  rooms               Room[]
+  calendarProviders   CalendarProvider[]
+  userRoles           UserRoleAssignment[]
+  announcementTargets AnnouncementTarget[]
+
+  @@unique([organizationId, code])
+  @@index([organizationId])
+  @@map("sites")
+}
+
 model User {
   id          String    @id @default(uuid())
   googleId    String    @unique @map("google_id")
@@ -40,14 +168,440 @@ model User {
   lastLoginAt DateTime? @map("last_login_at")
   createdAt   DateTime  @default(now()) @map("created_at")
   updatedAt   DateTime  @updatedAt @map("updated_at")
+  deletedAt   DateTime? @map("deleted_at") @db.Timestamptz(6)
 
-  logs SystemLog[]
+  logs          SystemLog[]
+  bookings      Booking[]
+  checkIns      CheckIn[]
+  announcements Announcement[]
+  userRoles     UserRoleAssignment[]
 
   @@map("users")
 }
 
-/// System / activity / audit log (Doc 08). Audit entries are written by the
-/// audit interceptor for state-changing admin actions (added with those routes).
+model Role {
+  id          String    @id @default(uuid())
+  key         String    @unique
+  name        String
+  description String?
+  isSystem    Boolean   @default(false) @map("is_system")
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt   DateTime? @map("deleted_at") @db.Timestamptz(6)
+
+  rolePermissions RolePermission[]
+  userRoles       UserRoleAssignment[]
+
+  @@map("roles")
+}
+
+model Permission {
+  id          String    @id @default(uuid())
+  key         String    @unique
+  description String?
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt   DateTime? @map("deleted_at") @db.Timestamptz(6)
+
+  rolePermissions RolePermission[]
+
+  @@map("permissions")
+}
+
+model RolePermission {
+  id           String @id @default(uuid())
+  roleId       String @map("role_id")
+  permissionId String @map("permission_id")
+
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@unique([roleId, permissionId])
+  @@index([permissionId])
+  @@map("role_permissions")
+}
+
+// Scope-aware role assignment. The (userId, roleId, organizationId, siteId)
+// uniqueness is enforced by a raw-SQL UNIQUE NULLS NOT DISTINCT index in the
+// migration (Prisma cannot express NULLS NOT DISTINCT).
+model UserRoleAssignment {
+  id             String   @id @default(uuid())
+  userId         String   @map("user_id")
+  roleId         String   @map("role_id")
+  organizationId String?  @map("organization_id")
+  siteId         String?  @map("site_id")
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role         Role          @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  organization Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  site         Site?         @relation(fields: [siteId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@map("user_roles")
+}
+
+model DeviceToken {
+  id         String    @id @default(uuid())
+  deviceId   String    @map("device_id")
+  tokenHash  String    @unique @map("token_hash")
+  label      String?
+  expiresAt  DateTime? @map("expires_at") @db.Timestamptz(6)
+  revokedAt  DateTime? @map("revoked_at") @db.Timestamptz(6)
+  lastUsedAt DateTime? @map("last_used_at") @db.Timestamptz(6)
+  createdBy  String?   @map("created_by")
+  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  device Device @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+
+  @@index([deviceId])
+  @@map("device_tokens")
+}
+
+// ===========================================================================
+// Facility Catalog
+// ===========================================================================
+
+model Facility {
+  id        String    @id @default(uuid())
+  name      String    @unique
+  icon      String?
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(6)
+
+  rooms RoomFacility[]
+
+  @@map("facilities")
+}
+
+model Room {
+  id                 String     @id @default(uuid())
+  siteId             String     @map("site_id")
+  organizationId     String     @map("organization_id")
+  calendarProviderId String?    @map("calendar_provider_id")
+  externalResourceId String?    @map("external_resource_id")
+  name               String
+  capacity           Int        @default(0)
+  location           String?
+  displayUrl         String?    @unique @map("display_url")
+  photoUrl           String?    @map("photo_url")
+  status             RoomStatus @default(AVAILABLE)
+  statusChangedAt    DateTime?  @map("status_changed_at") @db.Timestamptz(6)
+  maintenance        Boolean    @default(false)
+  active             Boolean    @default(true)
+  createdAt          DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime   @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt          DateTime?  @map("deleted_at") @db.Timestamptz(6)
+
+  site                Site                 @relation(fields: [siteId], references: [id], onDelete: Restrict)
+  organization        Organization         @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  calendarProvider    CalendarProvider?    @relation(fields: [calendarProviderId], references: [id], onDelete: SetNull)
+  facilities          RoomFacility[]
+  meetings            MeetingCache[]
+  bookings            Booking[]
+  syncState           SyncState?
+  currentDevice       Device?              @relation("RoomCurrentDevice")
+  deviceAssignments   DeviceAssignment[]
+  announcementTargets AnnouncementTarget[]
+
+  @@index([siteId])
+  @@index([organizationId, active])
+  @@index([status])
+  @@map("rooms")
+}
+
+model RoomFacility {
+  id         String @id @default(uuid())
+  roomId     String @map("room_id")
+  facilityId String @map("facility_id")
+
+  room     Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  facility Facility @relation(fields: [facilityId], references: [id], onDelete: Cascade)
+
+  @@unique([roomId, facilityId])
+  @@index([facilityId])
+  @@map("room_facilities")
+}
+
+// ===========================================================================
+// Calendar & Scheduling
+// ===========================================================================
+
+// Uniqueness (organizationId, type, siteId) enforced by raw-SQL UNIQUE NULLS
+// NOT DISTINCT index in the migration.
+model CalendarProvider {
+  id             String               @id @default(uuid())
+  organizationId String               @map("organization_id")
+  siteId         String?              @map("site_id")
+  type           CalendarProviderType
+  displayName    String               @map("display_name")
+  config         Json?
+  active         Boolean              @default(true)
+  createdAt      DateTime             @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime             @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt      DateTime?            @map("deleted_at") @db.Timestamptz(6)
+
+  organization Organization   @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  site         Site?          @relation(fields: [siteId], references: [id], onDelete: SetNull)
+  rooms        Room[]
+  meetings     MeetingCache[]
+  bookings     Booking[]
+
+  @@index([organizationId])
+  @@map("calendar_providers")
+}
+
+model SyncState {
+  id              String     @id @default(uuid())
+  roomId          String     @unique @map("room_id")
+  syncToken       String?    @map("sync_token")
+  watchChannelId  String?    @map("watch_channel_id")
+  watchResourceId String?    @map("watch_resource_id")
+  watchExpiresAt  DateTime?  @map("watch_expires_at") @db.Timestamptz(6)
+  lastStatus      SyncStatus @default(SUCCESS) @map("last_status")
+  lastError       String?    @map("last_error")
+  lastSyncedAt    DateTime?  @map("last_synced_at") @db.Timestamptz(6)
+
+  room Room @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  @@map("sync_state")
+}
+
+model MeetingCache {
+  id                 String        @id @default(uuid(7))
+  roomId             String        @map("room_id")
+  organizationId     String        @map("organization_id")
+  calendarProviderId String?       @map("calendar_provider_id")
+  externalEventId    String        @map("external_event_id")
+  icalUid            String?       @map("ical_uid")
+  subject            String
+  description        String?
+  organizerEmail     String?       @map("organizer_email")
+  organizerName      String?       @map("organizer_name")
+  startTime          DateTime      @map("start_time") @db.Timestamptz(6)
+  endTime            DateTime      @map("end_time") @db.Timestamptz(6)
+  meetUrl            String?       @map("meet_url")
+  zoomUrl            String?       @map("zoom_url")
+  source             MeetingSource @default(GOOGLE_CALENDAR)
+  canceledAt         DateTime?     @map("canceled_at") @db.Timestamptz(6)
+  syncedAt           DateTime      @default(now()) @map("synced_at") @db.Timestamptz(6)
+
+  room             Room                 @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  calendarProvider CalendarProvider?    @relation(fields: [calendarProviderId], references: [id], onDelete: SetNull)
+  participants     MeetingParticipant[]
+  checkIn          CheckIn?
+  booking          Booking?
+
+  @@unique([roomId, externalEventId])
+  @@index([roomId, startTime, endTime])
+  @@index([organizationId, startTime])
+  @@index([startTime])
+  @@map("meeting_cache")
+}
+
+model MeetingParticipant {
+  id             String         @id @default(uuid())
+  meetingCacheId String         @map("meeting_cache_id")
+  email          String
+  name           String?
+  responseStatus ResponseStatus @default(NEEDS_ACTION) @map("response_status")
+
+  meeting MeetingCache @relation(fields: [meetingCacheId], references: [id], onDelete: Cascade)
+
+  @@unique([meetingCacheId, email])
+  @@index([meetingCacheId])
+  @@map("meeting_participants")
+}
+
+model Booking {
+  id                 String        @id @default(uuid(7))
+  roomId             String        @map("room_id")
+  createdBy          String?       @map("created_by")
+  meetingCacheId     String?       @unique @map("meeting_cache_id")
+  calendarProviderId String?       @map("calendar_provider_id")
+  subject            String
+  purpose            String?
+  startTime          DateTime      @map("start_time") @db.Timestamptz(6)
+  endTime            DateTime      @map("end_time") @db.Timestamptz(6)
+  externalEventId    String?       @map("external_event_id")
+  status             BookingStatus @default(CREATED)
+  idempotencyKey     String?       @unique @map("idempotency_key")
+  createdAt          DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime      @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  room             Room                 @relation(fields: [roomId], references: [id], onDelete: Restrict)
+  creator          User?                @relation(fields: [createdBy], references: [id], onDelete: SetNull)
+  meeting          MeetingCache?        @relation(fields: [meetingCacheId], references: [id], onDelete: SetNull)
+  calendarProvider CalendarProvider?    @relation(fields: [calendarProviderId], references: [id], onDelete: SetNull)
+  participants     BookingParticipant[]
+
+  @@index([roomId, startTime])
+  @@map("bookings")
+}
+
+model BookingParticipant {
+  id        String  @id @default(uuid())
+  bookingId String  @map("booking_id")
+  email     String
+  name      String?
+
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  @@unique([bookingId, email])
+  @@index([bookingId])
+  @@map("booking_participants")
+}
+
+model CheckIn {
+  id             String       @id @default(uuid())
+  meetingCacheId String       @unique @map("meeting_cache_id")
+  checkedInBy    String?      @map("checked_in_by")
+  scheduledStart DateTime     @map("scheduled_start") @db.Timestamptz(6)
+  checkedInAt    DateTime?    @map("checked_in_at") @db.Timestamptz(6)
+  graceDeadline  DateTime     @map("grace_deadline") @db.Timestamptz(6)
+  state          CheckInState @default(PENDING)
+  releasedAt     DateTime?    @map("released_at") @db.Timestamptz(6)
+  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime     @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  meeting MeetingCache @relation(fields: [meetingCacheId], references: [id], onDelete: Cascade)
+  user    User?        @relation(fields: [checkedInBy], references: [id], onDelete: SetNull)
+
+  @@index([state, graceDeadline])
+  @@map("check_ins")
+}
+
+// ===========================================================================
+// Device & Display
+// ===========================================================================
+
+model Device {
+  id              String       @id @default(uuid())
+  currentRoomId   String?      @unique @map("current_room_id")
+  hostname        String       @unique
+  status          DeviceStatus @default(UNKNOWN)
+  agentVersion    String?      @map("agent_version")
+  lastHeartbeatAt DateTime?    @map("last_heartbeat_at") @db.Timestamptz(6)
+  createdAt       DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime     @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt       DateTime?    @map("deleted_at") @db.Timestamptz(6)
+
+  currentRoom Room?              @relation("RoomCurrentDevice", fields: [currentRoomId], references: [id], onDelete: SetNull)
+  tokens      DeviceToken[]
+  heartbeats  DeviceHeartbeat[]
+  assignments DeviceAssignment[]
+
+  @@index([status])
+  @@map("devices")
+}
+
+model DeviceAssignment {
+  id           String    @id @default(uuid())
+  deviceId     String    @map("device_id")
+  roomId       String    @map("room_id")
+  assignedAt   DateTime  @default(now()) @map("assigned_at") @db.Timestamptz(6)
+  unassignedAt DateTime? @map("unassigned_at") @db.Timestamptz(6)
+  assignedBy   String?   @map("assigned_by")
+
+  device Device @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+  room   Room   @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  @@index([roomId, assignedAt])
+  @@map("device_assignments")
+}
+
+model DeviceHeartbeat {
+  id                  String    @id @default(uuid(7))
+  deviceId            String    @map("device_id")
+  cpuUsage            Float?    @map("cpu_usage")
+  ramUsage            Float?    @map("ram_usage")
+  storageUsage        Float?    @map("storage_usage")
+  internetOk          Boolean   @default(true) @map("internet_ok")
+  chromeRunning       Boolean   @default(false) @map("chrome_running")
+  displayRunning      Boolean   @default(false) @map("display_running")
+  webcamConnected     Boolean   @default(false) @map("webcam_connected")
+  microphoneConnected Boolean   @default(false) @map("microphone_connected")
+  tvConnected         Boolean   @default(false) @map("tv_connected")
+  lastCalendarSync    DateTime? @map("last_calendar_sync") @db.Timestamptz(6)
+  createdAt           DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  device Device @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+
+  @@index([deviceId, createdAt])
+  @@map("device_heartbeats")
+}
+
+// ===========================================================================
+// Communication
+// ===========================================================================
+
+model Announcement {
+  id        String            @id @default(uuid())
+  createdBy String?           @map("created_by")
+  title     String
+  message   String
+  scope     AnnouncementScope @default(GLOBAL)
+  startsAt  DateTime?         @map("starts_at") @db.Timestamptz(6)
+  expiresAt DateTime?         @map("expires_at") @db.Timestamptz(6)
+  active    Boolean           @default(true)
+  createdAt DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
+  deletedAt DateTime?         @map("deleted_at") @db.Timestamptz(6)
+
+  creator User?                @relation(fields: [createdBy], references: [id], onDelete: SetNull)
+  targets AnnouncementTarget[]
+
+  @@index([active, startsAt, expiresAt])
+  @@map("announcements")
+}
+
+// Exactly-one-of (organizationId, siteId, roomId) is enforced by a raw-SQL
+// CHECK constraint in the migration (GLOBAL scope = all three NULL).
+model AnnouncementTarget {
+  id             String  @id @default(uuid())
+  announcementId String  @map("announcement_id")
+  organizationId String? @map("organization_id")
+  siteId         String? @map("site_id")
+  roomId         String? @map("room_id")
+
+  announcement Announcement  @relation(fields: [announcementId], references: [id], onDelete: Cascade)
+  organization Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  site         Site?         @relation(fields: [siteId], references: [id], onDelete: SetNull)
+  room         Room?         @relation(fields: [roomId], references: [id], onDelete: SetNull)
+
+  @@index([announcementId])
+  @@map("announcement_targets")
+}
+
+// ===========================================================================
+// Analytics (derived, polymorphic scope — no FK by design)
+// ===========================================================================
+
+model AnalyticsRollup {
+  id              String               @id @default(uuid())
+  granularity     AnalyticsGranularity
+  scopeType       AnalyticsScopeType   @map("scope_type")
+  scopeId         String               @map("scope_id")
+  periodStart     DateTime             @map("period_start") @db.Date
+  totalMeetings   Int                  @default(0) @map("total_meetings")
+  meetingMinutes  Int                  @default(0) @map("meeting_minutes")
+  occupiedMinutes Int                  @default(0) @map("occupied_minutes")
+  noShows         Int                  @default(0) @map("no_shows")
+  cancelledCount  Int                  @default(0) @map("cancelled_count")
+  occupancyRate   Float                @default(0) @map("occupancy_rate")
+  createdAt       DateTime             @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime             @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@unique([granularity, scopeType, scopeId, periodStart])
+  @@index([scopeType, scopeId, periodStart])
+  @@index([granularity, periodStart])
+  @@map("analytics_rollup")
+}
+
+// ===========================================================================
+// Platform & Admin
+// ===========================================================================
+
 model SystemLog {
   id          String   @id @default(uuid())
   actorUserId String?  @map("actor_user_id")
@@ -65,8 +619,6 @@ model SystemLog {
   @@map("system_logs")
 }
 
-/// Runtime-tunable settings (Doc 16 §9). Cached in Redis and hot-reloadable so
-/// admins can change behavior (status windows, sync interval) without redeploy.
 model Setting {
   id        String   @id @default(uuid())
   key       String
@@ -76,4 +628,20 @@ model Setting {
 
   @@unique([key, scope])
   @@map("settings")
+}
+
+// Transactional outbox for reliable domain-event delivery. The unpublished
+// queue index (WHERE published_at IS NULL) is a raw-SQL partial index.
+model EventOutbox {
+  id            String    @id @default(uuid(7))
+  eventType     String    @map("event_type")
+  aggregateType String    @map("aggregate_type")
+  aggregateId   String    @map("aggregate_id")
+  payload       Json
+  occurredAt    DateTime  @default(now()) @map("occurred_at") @db.Timestamptz(6)
+  publishedAt   DateTime? @map("published_at") @db.Timestamptz(6)
+  attempts      Int       @default(0)
+
+  @@index([aggregateType, aggregateId])
+  @@map("event_outbox")
 }
