@@ -7,6 +7,7 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 
 import { CommonModule } from './common/common.module';
 import { CatalogModule } from './modules/catalog/catalog.module';
+import { EventModule } from './modules/event/event.module';
 import { HealthModule } from './modules/health/health.module';
 import { StatusModule } from './modules/status/status.module';
 import { validateEnv, type Env } from './shared/config/env';
@@ -45,6 +46,7 @@ import { RedisModule } from './shared/redis/redis.module';
     PrismaModule,
     RedisModule,
     CommonModule,
+    EventModule,
     CatalogModule,
     StatusModule,
     HealthModule,
