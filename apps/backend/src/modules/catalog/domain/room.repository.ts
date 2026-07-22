@@ -72,4 +72,11 @@ export abstract class RoomRepository {
 
   /** Replace the room's facility links with exactly the given set (within the tx). */
   abstract setFacilities(roomId: string, facilityIds: readonly string[]): Promise<void>;
+
+  /**
+   * Persist the room's status and status-change timestamp only. The write
+   * authority for status belongs to the Phase 3 Status Engine, but the mutation
+   * stays within the Room aggregate. Mechanical: no validation, no events.
+   */
+  abstract setStatus(roomId: string, status: RoomStatus, statusChangedAt: Date): Promise<void>;
 }

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { TransactionHost } from '@nestjs-cls/transactional';
 import { type TransactionalAdapterPrisma } from '@nestjs-cls/transactional-adapter-prisma';
-import { Prisma, type Room } from '@prisma/client';
+import { Prisma, type Room, type RoomStatus } from '@prisma/client';
 
 import { buildPage, type Page } from '../../../common/pagination/page';
 import { toSkipTake, type PageRequest } from '../../../common/pagination/page-request';
@@ -108,6 +108,11 @@ export class PrismaRoomRepository extends BaseRepository implements RoomReposito
     // a defensive guard). The room's RoomFacility links are intentionally left
     // intact (shallow, non-cascading soft delete).
     await this.client.room.update({ where: { id }, data: { deletedAt: new Date() } });
+  }
+
+  async setStatus(roomId: string, status: RoomStatus, statusChangedAt: Date): Promise<void> {
+    // Mechanical: persist only status + statusChangedAt on the ambient client.
+    await this.client.room.update({ where: { id: roomId }, data: { status, statusChangedAt } });
   }
 
   async setFacilities(roomId: string, facilityIds: readonly string[]): Promise<void> {

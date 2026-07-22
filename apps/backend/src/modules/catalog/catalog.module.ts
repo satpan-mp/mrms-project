@@ -30,6 +30,9 @@ import { PrismaSiteRepository } from './infrastructure/prisma-site.repository';
     FacilityService,
     RoomService,
   ],
-  exports: [SiteService, FacilityService, RoomService],
+  // RoomRepository (abstract port) is exported so the Phase 3 StatusModule can
+  // read rooms and persist status via the Room aggregate. Only the port token is
+  // exported — never the Prisma implementation.
+  exports: [SiteService, FacilityService, RoomService, RoomRepository],
 })
 export class CatalogModule {}
