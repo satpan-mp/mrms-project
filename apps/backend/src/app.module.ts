@@ -5,6 +5,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 
+import { CommonModule } from './common/common.module';
+import { CatalogModule } from './modules/catalog/catalog.module';
 import { HealthModule } from './modules/health/health.module';
 import { validateEnv, type Env } from './shared/config/env';
 import { LoggerModule } from './shared/logger/logger.module';
@@ -41,6 +43,8 @@ import { RedisModule } from './shared/redis/redis.module';
     LoggerModule,
     PrismaModule,
     RedisModule,
+    CommonModule,
+    CatalogModule,
     HealthModule,
   ],
   providers: [
